@@ -63,7 +63,7 @@ spring:
       names: default-datasource
       default-datasource:
         type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.cj.jdbc.Driver
+        driverClassName: com.mysql.jdbc.Driver
         url: jdbc:mysql://114.115.136.5:3306/lilishop?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
         username: root
         password: lilishop

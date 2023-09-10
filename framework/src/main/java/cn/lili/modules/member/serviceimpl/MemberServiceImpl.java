@@ -144,6 +144,15 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     }
 
     @Override
+    public boolean userAuth(MemberAuthDTO memberAuthDTO) {
+        Member member = this.getById(memberAuthDTO.getUserId());
+        if (member == null) {
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }
+        return true;
+    }
+
+    @Override
     public Token usernameLogin(String username, String password) {
         Member member = this.findMember(username);
         //判断用户是否存在

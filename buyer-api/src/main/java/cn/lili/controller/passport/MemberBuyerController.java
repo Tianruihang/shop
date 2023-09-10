@@ -8,6 +8,7 @@ import cn.lili.common.security.context.UserContext;
 import cn.lili.common.security.enums.UserEnums;
 import cn.lili.common.vo.ResultMessage;
 import cn.lili.modules.member.entity.dos.Member;
+import cn.lili.modules.member.entity.dto.MemberAuthDTO;
 import cn.lili.modules.member.entity.dto.MemberEditDTO;
 import cn.lili.modules.member.entity.enums.QRCodeLoginSessionStatusEnum;
 import cn.lili.modules.member.entity.vo.QRLoginResultVo;
@@ -249,6 +250,14 @@ public class MemberBuyerController {
         memberService.initPass(password);
         return ResultUtil.success();
     }
+
+    @ApiOperation(value = "实名认证")
+    @PostMapping("/userAuth")
+    public ResultMessage<Object> userAuth(MemberAuthDTO memberAuthDTO) {
+        memberService.userAuth(memberAuthDTO);
+        return ResultUtil.success();
+    }
+
 
     @ApiOperation(value = "注销账号")
     @ApiImplicitParams({

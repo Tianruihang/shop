@@ -8,6 +8,7 @@ import cn.lili.modules.connect.entity.dto.ConnectAuthUser;
 import cn.lili.modules.member.entity.dos.Member;
 import cn.lili.modules.member.entity.dto.ManagerMemberEditDTO;
 import cn.lili.modules.member.entity.dto.MemberAddDTO;
+import cn.lili.modules.member.entity.dto.MemberAuthDTO;
 import cn.lili.modules.member.entity.dto.MemberEditDTO;
 import cn.lili.modules.member.entity.vo.MemberSearchVO;
 import cn.lili.modules.member.entity.vo.MemberVO;
@@ -47,6 +48,8 @@ public interface MemberService extends IService<Member> {
     Member findByMobile(String mobile);
 
     boolean findByMobile(String uuid, String mobile);
+
+    boolean userAuth(MemberAuthDTO memberAuthDTO);
 
     /**
      * 通过用户名获取用户
