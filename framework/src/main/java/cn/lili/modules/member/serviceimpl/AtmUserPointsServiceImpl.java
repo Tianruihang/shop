@@ -8,4 +8,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AtmUserPointsServiceImpl extends ServiceImpl<AtmUserPointsMapper, AtmUserPoints> implements AtmUserPointsService {
+
 }

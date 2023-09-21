@@ -23,15 +23,14 @@ import cn.lili.modules.connect.entity.Connect;
 import cn.lili.modules.connect.entity.dto.ConnectAuthUser;
 import cn.lili.modules.connect.service.ConnectService;
 import cn.lili.modules.member.aop.annotation.PointLogPoint;
+import cn.lili.modules.member.entity.dos.AtmUserPoints;
 import cn.lili.modules.member.entity.dos.Member;
 import cn.lili.modules.member.entity.dto.*;
 import cn.lili.modules.member.entity.enums.PointTypeEnum;
 import cn.lili.modules.member.entity.enums.QRCodeLoginSessionStatusEnum;
-import cn.lili.modules.member.entity.vo.MemberSearchVO;
-import cn.lili.modules.member.entity.vo.MemberVO;
-import cn.lili.modules.member.entity.vo.QRCodeLoginSessionVo;
-import cn.lili.modules.member.entity.vo.QRLoginResultVo;
+import cn.lili.modules.member.entity.vo.*;
 import cn.lili.modules.member.mapper.MemberMapper;
+import cn.lili.modules.member.service.AtmUserPointsService;
 import cn.lili.modules.member.service.MemberService;
 import cn.lili.modules.member.token.MemberTokenGenerate;
 import cn.lili.modules.member.token.StoreTokenGenerate;
@@ -100,6 +99,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    private AtmUserPointsService atmUserPointsService;
     /**
      * 缓存
      */
@@ -145,12 +146,36 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Override
     public boolean userAuth(MemberAuthDTO memberAuthDTO) {
-        Member member = this.getById(memberAuthDTO.getUserId());
-        if (member == null) {
+        AuthUser tokenUser = UserContext.getCurrentUser();
+        if (tokenUser == null) {
             throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }
+        //如果已存在查询是否存在用户积分表
+        AtmUserPoints atmUserPoints = atmUserPointsService.getOne(Wrappers.<AtmUserPoints>lambdaQuery().eq(AtmUserPoints::getUserId, tokenUser.getId()));
+        if (atmUserPoints == null) {
+            atmUserPoints = new AtmUserPoints();
+            BeanUtil.copyProperties(memberAuthDTO, atmUserPoints);
+            atmUserPoints.setUserId(tokenUser.getId());
+            atmUserPoints.setCreateTime(new Date());
+            atmUserPointsService.save(atmUserPoints);
+        }else {
+            BeanUtil.copyProperties(memberAuthDTO, atmUserPoints);
+            atmUserPointsService.updateById(atmUserPoints);
         }
         return true;
     }
+
+    @Override
+    public AtmUserPoints getUserAtmPoint(){
+        AuthUser tokenUser = UserContext.getCurrentUser();
+        if (tokenUser == null) {
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }
+        //如果已存在查询是否存在用户积分表
+        AtmUserPoints atmUserPoints = atmUserPointsService.getOne(Wrappers.<AtmUserPoints>lambdaQuery().eq(AtmUserPoints::getUserId, tokenUser.getId()));
+        return atmUserPoints;
+    }
+
 
     @Override
     public Token usernameLogin(String username, String password) {
@@ -512,6 +537,22 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
                 memberSearchVO.getDisabled().equals(SwitchEnum.OPEN.name()) ? 1 : 0);
         queryWrapper.orderByDesc("create_time");
         return this.baseMapper.pageByMemberVO(PageUtil.initPage(page), queryWrapper);
+    }
+
+    public IPage<MemberAuthVO>  getMemberAuthPage(MemberSearchVO memberSearchVO, PageVO page) {
+        QueryWrapper<Member> queryWrapper = Wrappers.query();
+        //用户名查询
+        queryWrapper.like(CharSequenceUtil.isNotBlank(memberSearchVO.getUsername()), "username", memberSearchVO.getUsername());
+        //用户名查询
+        queryWrapper.like(CharSequenceUtil.isNotBlank(memberSearchVO.getNickName()), "nick_name", memberSearchVO.getNickName());
+        //按照电话号码查询
+        queryWrapper.like(CharSequenceUtil.isNotBlank(memberSearchVO.getMobile()), "mobile", memberSearchVO.getMobile());
+        //按照会员状态查询
+        queryWrapper.eq(CharSequenceUtil.isNotBlank(memberSearchVO.getDisabled()), "disabled",
+                memberSearchVO.getDisabled().equals(SwitchEnum.OPEN.name()) ? 1 : 0);
+        queryWrapper.isNotNull("a.status");
+        queryWrapper.orderByDesc("create_time");
+        return this.baseMapper.pageByMemberAuthVO(PageUtil.initPage(page), queryWrapper);
     }
 
     @Override

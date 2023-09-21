@@ -5,11 +5,14 @@ import cn.lili.common.aop.annotation.PreventDuplicateSubmissions;
 import cn.lili.common.enums.ResultUtil;
 import cn.lili.common.vo.PageVO;
 import cn.lili.common.vo.ResultMessage;
+import cn.lili.modules.member.entity.dos.AtmUserPoints;
 import cn.lili.modules.member.entity.dos.Member;
 import cn.lili.modules.member.entity.dto.ManagerMemberEditDTO;
 import cn.lili.modules.member.entity.dto.MemberAddDTO;
+import cn.lili.modules.member.entity.vo.MemberAuthVO;
 import cn.lili.modules.member.entity.vo.MemberSearchVO;
 import cn.lili.modules.member.entity.vo.MemberVO;
+import cn.lili.modules.member.service.AtmUserPointsService;
 import cn.lili.modules.member.service.MemberService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -34,6 +37,8 @@ import java.util.List;
 public class MemberManagerController {
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private AtmUserPointsService atmUserPointsService;
 
     @ApiOperation(value = "会员分页列表")
     @GetMapping
@@ -41,6 +46,18 @@ public class MemberManagerController {
         return ResultUtil.data(memberService.getMemberPage(memberSearchVO, page));
     }
 
+    @ApiOperation(value = "会员审核分页列表")
+    @GetMapping("auth/page")
+    public ResultMessage<IPage<MemberAuthVO>> getAuthByPage(MemberSearchVO memberSearchVO, PageVO page) {
+        return ResultUtil.data(memberService.getMemberAuthPage(memberSearchVO, page));
+    }
+
+    @ApiOperation(value = "会员审核")
+    @PutMapping("auth")
+    public ResultMessage<Object> updateAuth(AtmUserPoints atmUserPoints) {
+        atmUserPointsService.updateById(atmUserPoints);
+        return ResultUtil.success();
+    }
 
     @ApiOperation(value = "通过ID获取会员信息")
     @ApiImplicitParam(name = "id", value = "会员ID", required = true, dataType = "String", paramType = "path")

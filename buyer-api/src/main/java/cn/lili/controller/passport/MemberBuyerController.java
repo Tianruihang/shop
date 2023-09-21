@@ -6,6 +6,7 @@ import cn.lili.common.exception.ServiceException;
 import cn.lili.common.security.AuthUser;
 import cn.lili.common.security.context.UserContext;
 import cn.lili.common.security.enums.UserEnums;
+import cn.lili.common.utils.StringUtils;
 import cn.lili.common.vo.ResultMessage;
 import cn.lili.modules.member.entity.dos.Member;
 import cn.lili.modules.member.entity.dto.MemberAuthDTO;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -168,9 +170,10 @@ public class MemberBuyerController {
                                           @NotNull(message = "密码不能为空") @RequestParam String password,
                                           @NotNull(message = "手机号为空") @RequestParam String mobilePhone,
                                           @RequestHeader String uuid,
-                                          @NotNull(message = "验证码不能为空") @RequestParam String code) {
-
-        if (smsUtil.verifyCode(mobilePhone, VerificationEnums.REGISTER, uuid, code)) {
+                                          @RequestParam String code) {
+        if (StringUtils.isEmpty(code)){
+            return ResultUtil.data(memberService.register(username, password, mobilePhone));
+        } else if (smsUtil.verifyCode(mobilePhone, VerificationEnums.REGISTER, uuid, code)) {
             return ResultUtil.data(memberService.register(username, password, mobilePhone));
         } else {
             throw new ServiceException(ResultCode.VERIFICATION_SMS_CHECKED_ERROR);
@@ -256,6 +259,15 @@ public class MemberBuyerController {
     public ResultMessage<Object> userAuth(MemberAuthDTO memberAuthDTO) {
         memberService.userAuth(memberAuthDTO);
         return ResultUtil.success();
+    }
+
+    @ApiOperation(value = "获取实名认证信息")
+    @GetMapping("/userAtmPoint")
+    public ResultMessage<Object> getUserAtmPoint() {
+        AuthUser authUser = UserContext.getCurrentUser();
+        if (authUser == null)
+            return ResultUtil.error(403,"登录已失效，请重新登录");
+        return ResultUtil.data(memberService.getUserAtmPoint());
     }
 
 

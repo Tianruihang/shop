@@ -27,4 +27,7 @@ public class MemberSearchVO {
      */
     @ApiModelProperty(value = "会员状态")
     private String disabled;
+
+    @ApiModelProperty(value = "0:待审核 1:审核通过 2:审核失败")
+    private int status;
 }

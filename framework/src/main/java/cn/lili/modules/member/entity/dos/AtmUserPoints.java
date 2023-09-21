@@ -14,7 +14,7 @@ public class AtmUserPoints extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "会员id")
-    private int userId;
+    private String userId;
 
     @ApiModelProperty(value = "会员真实姓名")
     private String trueName;
@@ -63,4 +63,13 @@ public class AtmUserPoints extends BaseEntity {
 
     @ApiModelProperty(value = "手持身份证")
     private String authImg;//手持身份证
+
+    @ApiModelProperty(value = "支付宝账号")
+    String zfbImg;//支付宝收款码
+
+    @ApiModelProperty(value = "微信账号")
+    String WeChatImg;//微信收款码
+
+    @ApiModelProperty(value = "0:待审核 1:审核通过 2:审核失败")
+    private int status;
 }
