@@ -10,5 +10,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface AtmTaskService extends IService<AtmTask> {
 
     //获取任务列表
-    IPage<AtmTask> getTaskList(AtmTaskSearchParam atmTaskSearchParam, PageVO pageVO);
+    IPage<AtmTaskVO> getTaskList(AtmTaskVO atmTaskSearchParam, PageVO pageVO);
 }

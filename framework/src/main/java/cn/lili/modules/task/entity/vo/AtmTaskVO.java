@@ -24,4 +24,8 @@ public class AtmTaskVO implements Serializable {
     private long createTime;
 
     private long endTime;
+
+    private String userId;
+
+    private String taskId;
 }

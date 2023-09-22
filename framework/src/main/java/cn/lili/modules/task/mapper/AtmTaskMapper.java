@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Select;
 public interface AtmTaskMapper extends BaseMapper<AtmTask> {
 
     //分页方法
-    @Select("select * from atm_task ${ew.customSqlSegment}")
+    @Select("select at.*,atu.user_id from atm_task at left join atm_task_user atu on at.id = atu.task_id ${ew.customSqlSegment}")
     IPage<AtmTaskVO> pageByAtmTaskVO(IPage<AtmTaskVO> page, @Param(Constants.WRAPPER) Wrapper<Member> queryWrapper);
 
 }
