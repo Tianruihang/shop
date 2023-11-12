@@ -35,4 +35,12 @@ public interface MemberMapper extends BaseMapper<Member> {
     @Select("select m.*,a.id as pointId,a.user_id,a.true_name,a.id_card_num,a.on_img,a.back_img,a.auth_img,a.zfb_img,a.we_chat_img,a.status" +
             " from li_member m left join atm_user_points a on m.id=a.user_id ${ew.customSqlSegment}")
     IPage<MemberAuthVO> pageByMemberAuthVO(IPage<MemberAuthVO> page, @Param(Constants.WRAPPER) Wrapper<Member> queryWrapper);
+
+    @Select("select m.*,a.id as pointId,a.user_id,a.true_name,a.id_card_num,a.on_img,a.back_img,a.auth_img,a.zfb_img,a.we_chat_img,a.status" +
+            " from li_member m left join atm_user_points a on m.id=a.user_id ${ew.customSqlSegment}")
+    List<MemberAuthVO> listByMemberAuthVO(@Param(Constants.WRAPPER) Wrapper<Member> queryWrapper);
+    //查询实名制会员
+    @Select("select m.*,a.status" +
+            " from li_member m left join atm_user_points a on m.id=a.user_id where a.status=1")
+    List<MemberAuthVO> listByMemberAuthVO2();
 }

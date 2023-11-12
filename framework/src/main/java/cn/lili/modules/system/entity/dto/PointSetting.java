@@ -20,6 +20,9 @@ public class PointSetting implements Serializable {
     @ApiModelProperty(value = "注册")
     private Integer register;
 
+    @ApiModelProperty(value = "实名认证日积分")
+    private Integer authDaily;
+
     @ApiModelProperty(value = "消费1元赠送多少积分")
     private Integer consumer;
 
@@ -40,6 +43,13 @@ public class PointSetting implements Serializable {
             return 0;
         }
         return register;
+    }
+
+    public Integer getAuthDaily() {
+        if (authDaily == null || authDaily < 0) {
+            return 0;
+        }
+        return authDaily;
     }
 
     public Integer getMoney() {

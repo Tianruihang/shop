@@ -6,7 +6,9 @@ import cn.lili.common.security.context.UserContext;
 import cn.lili.common.vo.PageVO;
 import cn.lili.common.vo.ResultMessage;
 import cn.lili.modules.member.entity.dos.MemberAddress;
+import cn.lili.modules.member.entity.dto.MemberPointMessage;
 import cn.lili.modules.member.service.MemberAddressService;
+import cn.lili.modules.member.service.MemberService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -34,6 +37,8 @@ public class MemberAddressBuyerController {
      */
     @Autowired
     private MemberAddressService memberAddressService;
+    @Autowired
+    private MemberService memberService;
 
     @ApiOperation(value = "获取会员收件地址分页列表")
     @GetMapping
@@ -82,4 +87,10 @@ public class MemberAddressBuyerController {
         return ResultUtil.success();
     }
 
+    //获取用户积分列表
+    @ApiOperation(value = "获取用户积分列表")
+    @GetMapping(value = "/pointList/{id}")
+    public ResultMessage<List<MemberPointMessage>> pointList(@PathVariable String id){
+        return ResultUtil.data(memberService.pointList(id));
+    }
 }

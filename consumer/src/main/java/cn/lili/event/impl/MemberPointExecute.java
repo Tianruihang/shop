@@ -9,6 +9,7 @@ import cn.lili.event.MemberRegisterEvent;
 import cn.lili.event.OrderStatusChangeEvent;
 import cn.lili.modules.member.entity.dos.Member;
 import cn.lili.modules.member.entity.dos.MemberEvaluation;
+import cn.lili.modules.member.entity.dto.MemberPointMessage;
 import cn.lili.modules.member.entity.enums.PointTypeEnum;
 import cn.lili.modules.member.service.MemberService;
 import cn.lili.modules.order.aftersale.entity.dos.AfterSale;
@@ -24,7 +25,11 @@ import cn.lili.modules.system.entity.enums.SettingEnum;
 import cn.lili.modules.system.service.SettingService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 会员积分
@@ -51,6 +56,7 @@ public class MemberPointExecute implements MemberRegisterEvent, GoodsCommentComp
     @Autowired
     private OrderService orderService;
 
+
     /**
      * 会员注册赠送积分
      *
@@ -58,6 +64,13 @@ public class MemberPointExecute implements MemberRegisterEvent, GoodsCommentComp
      */
     @Override
     public void memberRegister(Member member) {
+        //获取积分设置
+        PointSetting pointSetting = getPointSetting();
+        //赠送会员积分
+        memberService.updateMemberPoint(pointSetting.getRegister().longValue(), PointTypeEnum.INCREASE.name(), member.getId(), "会员注册，赠送积分" + pointSetting.getRegister() + "分");
+    }
+
+    public void authDaily(Member member){
         //获取积分设置
         PointSetting pointSetting = getPointSetting();
         //赠送会员积分

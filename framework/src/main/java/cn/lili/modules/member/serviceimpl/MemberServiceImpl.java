@@ -37,6 +37,10 @@ import cn.lili.modules.member.token.StoreTokenGenerate;
 import cn.lili.modules.store.entity.dos.Store;
 import cn.lili.modules.store.entity.enums.StoreStatusEnum;
 import cn.lili.modules.store.service.StoreService;
+import cn.lili.modules.system.entity.dos.Setting;
+import cn.lili.modules.system.entity.dto.PointSetting;
+import cn.lili.modules.system.entity.enums.SettingEnum;
+import cn.lili.modules.system.service.SettingService;
 import cn.lili.mybatis.util.PageUtil;
 import cn.lili.rocketmq.RocketmqSendCallbackBuilder;
 import cn.lili.rocketmq.tags.MemberTagsEnum;
@@ -46,17 +50,16 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -68,6 +71,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> implements MemberService {
 
+    //设置静态值keyAddName
+    private static final String KEY_AUTH_NAME = "AUTH_DAILY_";
     /**
      * 会员token
      */
@@ -101,6 +106,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     private AtmUserPointsService atmUserPointsService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private SettingService settingService;
     /**
      * 缓存
      */
@@ -593,6 +602,50 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
         }
         throw new ServiceException(ResultCode.USER_NOT_EXIST);
+    }
+
+    public List<MemberPointMessage> pointList(String userId){
+        List<MemberPointMessage> memberPointMessages = new ArrayList<>();
+        //获取积分设置
+        PointSetting pointSetting = getPointSetting();
+        //获取用户积分
+        //查询Redis内积分队列
+        //24小时分成24个类型查询对应数值
+        String keyName = KEY_AUTH_NAME + userId + "_";
+        //24个类型
+        for (int i = 0; i < 24; i++) {
+            boolean keyBool =  stringRedisTemplate.hasKey(keyName + i);
+            if (keyBool){
+                MemberPointMessage memberPointMessage = new MemberPointMessage();
+                memberPointMessage.setPoint(pointSetting.getAuthDaily().longValue());
+                memberPointMessage.setPointName(stringRedisTemplate.opsForValue().get(keyName + i));
+                memberPointMessages.add(memberPointMessage);
+            }
+        }
+
+        return memberPointMessages;
+
+    }
+
+    @Override
+    public void authDailyPoints(int hour) {
+        //获取实名制会员列表
+        List<MemberAuthVO> memberAuthVOList = this.baseMapper.listByMemberAuthVO2();
+        String pointName = "实名制认证_";
+        memberAuthVOList.forEach(memberAuthVO -> {
+            //获取积分设置
+            PointSetting pointSetting = getPointSetting();
+            long point = pointSetting.getAuthDaily().longValue();
+            //将数据放入Redis
+            String keyName = KEY_AUTH_NAME + memberAuthVO.getUserId() + "_";
+            stringRedisTemplate.opsForValue().set(keyName + hour, pointName + hour, 24, TimeUnit.HOURS);
+        });
+
+    }
+
+    private PointSetting getPointSetting() {
+        Setting setting = settingService.get(SettingEnum.POINT_SETTING.name());
+        return new Gson().fromJson(setting.getSettingValue(), PointSetting.class);
     }
 
     @Override

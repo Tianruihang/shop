@@ -20,12 +20,28 @@ public class QuartzConfig {
     }
 
     @Bean
+    public JobDetail authDailyQuartzDetail() {
+        return JobBuilder.newJob(authDailyQuartz.class).withIdentity("authDailyQuartz").storeDurably().build();
+    }
+
+    @Bean
     public Trigger sensitiveQuartzTrigger() {
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
                 .withIntervalInSeconds(3600)
                 .repeatForever();
         return TriggerBuilder.newTrigger().forJob(sensitiveQuartzDetail())
                 .withIdentity("sensitiveQuartz")
+                .withSchedule(scheduleBuilder)
+                .build();
+    }
+
+    @Bean
+    public Trigger authDailyQuartzTrigger() {
+        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
+                .withIntervalInSeconds(3600)
+                .repeatForever();
+        return TriggerBuilder.newTrigger().forJob(authDailyQuartzDetail())
+                .withIdentity("authDailyQuartz")
                 .withSchedule(scheduleBuilder)
                 .build();
     }

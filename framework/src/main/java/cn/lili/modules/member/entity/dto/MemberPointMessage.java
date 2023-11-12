@@ -20,4 +20,7 @@ public class MemberPointMessage {
 
     @ApiModelProperty(value = "会员id")
     private String memberId;
+
+    @ApiModelProperty(value = "积分名称")
+    private String pointName;
 }

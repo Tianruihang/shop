@@ -7,10 +7,7 @@ import cn.lili.common.vo.PageVO;
 import cn.lili.modules.connect.entity.dto.ConnectAuthUser;
 import cn.lili.modules.member.entity.dos.AtmUserPoints;
 import cn.lili.modules.member.entity.dos.Member;
-import cn.lili.modules.member.entity.dto.ManagerMemberEditDTO;
-import cn.lili.modules.member.entity.dto.MemberAddDTO;
-import cn.lili.modules.member.entity.dto.MemberAuthDTO;
-import cn.lili.modules.member.entity.dto.MemberEditDTO;
+import cn.lili.modules.member.entity.dto.*;
 import cn.lili.modules.member.entity.vo.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -238,6 +235,10 @@ public interface MemberService extends IService<Member> {
      */
     Boolean updateMemberPoint(Long point, String type, String memberId, String content);
 
+    List<MemberPointMessage> pointList(String userId);
+
+    //会员积分
+    void authDailyPoints(int hour);
 
     /**
      * 修改会员状态
