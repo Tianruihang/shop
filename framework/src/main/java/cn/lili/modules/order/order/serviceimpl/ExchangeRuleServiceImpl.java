@@ -6,7 +6,9 @@ import cn.lili.modules.order.order.mapper.ExchangeRuleMapper;
 import cn.lili.modules.order.order.service.ExchangeRuleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ExchangeRuleServiceImpl extends ServiceImpl<ExchangeRuleMapper, ExchangeRule> implements ExchangeRuleService {
 
 
@@ -25,5 +27,12 @@ public class ExchangeRuleServiceImpl extends ServiceImpl<ExchangeRuleMapper, Exc
     public void update(ExchangeRule exchangeRule) {
         //更新
         this.baseMapper.updateById(exchangeRule);
+    }
+
+    @Override
+    public ExchangeRule queryLast() {
+        ExchangeRuleSearchParams exchangeRule = new ExchangeRuleSearchParams();
+        exchangeRule.setLast(true);
+        return this.baseMapper.selectOne(exchangeRule.queryWrapper());
     }
 }

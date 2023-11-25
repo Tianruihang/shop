@@ -3,8 +3,10 @@ package cn.lili.controller.order;
 import cn.lili.common.enums.ResultUtil;
 import cn.lili.common.vo.ResultMessage;
 import cn.lili.modules.order.order.entity.dos.AtmOrder;
+import cn.lili.modules.order.order.entity.dos.ExchangeRule;
 import cn.lili.modules.order.order.entity.dto.AtmOrderSearchParams;
 import cn.lili.modules.order.order.service.AtmOrderService;
+import cn.lili.modules.order.order.service.ExchangeRuleService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ public class AtmOrderController {
 
     @Autowired
     private AtmOrderService atmOrderService;
+    @Autowired
+    private ExchangeRuleService exchangeRuleService;
 
     //列表页面
     @GetMapping
@@ -37,9 +41,14 @@ public class AtmOrderController {
      * 保存订单
      */
     @PostMapping
-    public ResultMessage<Object> createBuyOrder(@RequestBody AtmOrder atmOrder) {
+    public ResultMessage<Object> createBuyOrder(AtmOrder atmOrder) {
         //保存
         atmOrderService.createBuyOrder(atmOrder);
         return ResultUtil.success();
+    }
+
+    @GetMapping("lastRule")
+    public ResultMessage<ExchangeRule> lastRule() {
+        return ResultUtil.data(exchangeRuleService.queryLast());
     }
 }

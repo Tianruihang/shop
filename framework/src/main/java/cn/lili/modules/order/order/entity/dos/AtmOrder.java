@@ -26,12 +26,12 @@ public class AtmOrder extends BaseEntity {
     private String pms;
     //状态
     private int status;
-    //创建时间
-    private Date createTime;
     //支付时间
     private Date payTime;
     //手续费
     private int charge;
     //支付类型
     private int payType;
+    //用户头像
+    private String face;
 }

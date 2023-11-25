@@ -10,9 +10,9 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode()
 @Data
-public class AtmOrderSearchParams extends PageVO {
+public class AtmOrderSearchParams {
     private static final long serialVersionUID = -6380573339089959194L;
 
     //用户id
@@ -39,7 +39,9 @@ public class AtmOrderSearchParams extends PageVO {
     public <T> QueryWrapper<T> queryWrapper(){
         AuthUser currentUser = UserContext.getCurrentUser();
         QueryWrapper<T> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", currentUser.getId());
+        if (userId != null)
+            wrapper.eq("user_id", userId);
+//        wrapper.eq("user_id", currentUser.getId());
         //根据支付类型查询
         wrapper.eq("pay_type", payType);
         //根据状态查询

@@ -15,4 +15,7 @@ public interface ExchangeRuleService extends IService<ExchangeRule> {
 
     //修改
     void update(ExchangeRule exchangeRule);
+
+    //查询最近一条记录
+    ExchangeRule queryLast();
 }

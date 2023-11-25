@@ -49,9 +49,14 @@ public class ExchangeRuleSearchParams extends PageVO {
     private String endTime;
     //交易类型
     private String type;
+    //是否是最后一条数据
+    private boolean last = false;
 
     public <T> QueryWrapper<T> queryWrapper(){
         QueryWrapper<T> wrapper = new QueryWrapper<>();
+        //查询最后一条数据
+        if (last)
+            wrapper.orderByDesc("create_time");
         return new QueryWrapper<>();
     }
 
