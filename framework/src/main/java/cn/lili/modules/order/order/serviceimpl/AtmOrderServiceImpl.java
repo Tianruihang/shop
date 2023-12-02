@@ -1,5 +1,6 @@
 package cn.lili.modules.order.order.serviceimpl;
 
+import cn.hutool.core.convert.Convert;
 import cn.lili.common.security.AuthUser;
 import cn.lili.common.security.context.UserContext;
 import cn.lili.modules.order.order.entity.dos.AtmOrder;
@@ -22,7 +23,9 @@ public class AtmOrderServiceImpl extends ServiceImpl<AtmOrderMapper, AtmOrder> i
 
     @Override
     public List<AtmOrder> queryList(AtmOrderSearchParams atmOrderSearchParams) {
-        return atmOrderMapper.queryList(atmOrderSearchParams.queryWrapper());
+        //AtmOrderSearchParams 转化为 AtmOrder
+        AtmOrder atmOrder = Convert.convert(AtmOrder.class, atmOrderSearchParams);
+        return atmOrderMapper.queryList(atmOrder.queryWrapper());
     }
 
     @Override
@@ -35,6 +38,13 @@ public class AtmOrderServiceImpl extends ServiceImpl<AtmOrderMapper, AtmOrder> i
 
     @Override
     public int payOrder(AtmOrder atmOrder) {
+        AtmOrder atmOrder1 = this.baseMapper.selectById(atmOrder.getId());
+        atmOrder1.setStatus(1);
+        return this.baseMapper.updateById(atmOrder1);
+    }
+
+    @Override
+    public int updateOrder(AtmOrder atmOrder) {
         return this.baseMapper.updateById(atmOrder);
     }
 }

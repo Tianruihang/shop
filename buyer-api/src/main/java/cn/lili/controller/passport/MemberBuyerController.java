@@ -188,6 +188,13 @@ public class MemberBuyerController {
         return ResultUtil.data(memberService.getUserInfo());
     }
 
+    @ApiOperation(value = "获取当前登录用户接口")
+    @GetMapping("/{id}")
+    public ResultMessage<Member> getUserInfoById(@PathVariable String id) {
+
+        return ResultUtil.data(memberService.getUserInfo());
+    }
+
     @ApiOperation(value = "通过短信重置密码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query"),

@@ -6,6 +6,7 @@ import cn.lili.common.vo.PageVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Date;
 public class AtmOrderSearchParams {
     private static final long serialVersionUID = -6380573339089959194L;
 
+    private String orderId;
     //用户id
     private String userId;
     //数量
@@ -36,18 +38,5 @@ public class AtmOrderSearchParams {
     //支付类型
     private int payType = 0;
 
-    public <T> QueryWrapper<T> queryWrapper(){
-        AuthUser currentUser = UserContext.getCurrentUser();
-        QueryWrapper<T> wrapper = new QueryWrapper<>();
-        if (userId != null)
-            wrapper.eq("user_id", userId);
-//        wrapper.eq("user_id", currentUser.getId());
-        //根据支付类型查询
-        wrapper.eq("pay_type", payType);
-        //根据状态查询
-        wrapper.eq("status", status);
-        //根据创建时间倒序
-        wrapper.orderByDesc("create_time");
-        return new QueryWrapper<>();
-    }
+
 }

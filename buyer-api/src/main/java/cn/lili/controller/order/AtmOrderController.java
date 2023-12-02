@@ -31,6 +31,13 @@ public class AtmOrderController {
 
     //更新页面
     @PutMapping
+    public ResultMessage<Object> updateOrder(AtmOrder atmOrder){
+        //保存
+        atmOrderService.updateOrder(atmOrder);
+        return ResultUtil.success();
+    }
+
+    @PutMapping("payOrder")
     public ResultMessage<Object> payOrder(AtmOrder atmOrder){
         //保存
         atmOrderService.payOrder(atmOrder);

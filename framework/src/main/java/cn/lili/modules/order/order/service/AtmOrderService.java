@@ -18,4 +18,6 @@ public interface AtmOrderService extends IService<AtmOrder> {
 
     //支付订单
     int payOrder(AtmOrder atmOrder);
+
+    int updateOrder(AtmOrder atmOrder);
 }
