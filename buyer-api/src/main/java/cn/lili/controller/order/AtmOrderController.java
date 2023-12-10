@@ -4,6 +4,7 @@ import cn.lili.common.enums.ResultUtil;
 import cn.lili.common.vo.ResultMessage;
 import cn.lili.modules.order.order.entity.dos.AtmOrder;
 import cn.lili.modules.order.order.entity.dos.ExchangeRule;
+import cn.lili.modules.order.order.entity.dto.AtmOrderDTO;
 import cn.lili.modules.order.order.entity.dto.AtmOrderSearchParams;
 import cn.lili.modules.order.order.service.AtmOrderService;
 import cn.lili.modules.order.order.service.ExchangeRuleService;
@@ -25,7 +26,7 @@ public class AtmOrderController {
 
     //列表页面
     @GetMapping
-    public ResultMessage<List<AtmOrder>> queryList(AtmOrderSearchParams atmOrderSearchParams) {
+    public ResultMessage<List<AtmOrderDTO>> queryList(AtmOrderSearchParams atmOrderSearchParams) {
         return ResultUtil.data(atmOrderService.queryList(atmOrderSearchParams));
     }
 
@@ -37,7 +38,7 @@ public class AtmOrderController {
         return ResultUtil.success();
     }
 
-    @PutMapping("payOrder")
+    @PutMapping("/payOrder")
     public ResultMessage<Object> payOrder(AtmOrder atmOrder){
         //保存
         atmOrderService.payOrder(atmOrder);

@@ -39,25 +39,4 @@ public class AtmOrder extends BaseEntity {
     private int payType;
     //支付截图
     private String payImg;
-    //用户头像
-    private String face;
-    //订单id
-    private String orderId;
-
-    public <AtmOrder> QueryWrapper<AtmOrder> queryWrapper(){
-        AuthUser currentUser = UserContext.getCurrentUser();
-        QueryWrapper<AtmOrder> wrapper = new QueryWrapper<>();
-        if (userId != null)
-            wrapper.eq("user_id", userId);
-//        wrapper.eq("user_id", currentUser.getId());
-        //根据支付类型查询
-        wrapper.eq("pay_type", payType);
-        //根据状态查询
-        wrapper.eq("status", status);
-        if (orderId != null)
-            wrapper.eq("a.id", orderId);
-        //根据创建时间倒序
-        wrapper.orderByDesc("create_time");
-        return wrapper;
-    }
 }

@@ -19,6 +19,8 @@ public class AtmOrderSearchParams {
     private String orderId;
     //用户id
     private String userId;
+    //购买用户id
+    private String payUserId;
     //数量
     private int num;
     //卖出价格
@@ -28,7 +30,7 @@ public class AtmOrderSearchParams {
     //支付密码
     private String pms;
     //状态
-    private int status;
+    private Integer status;
     //创建时间
     private Date createTime;
     //支付时间
@@ -36,7 +38,7 @@ public class AtmOrderSearchParams {
     //手续费
     private int charge;
     //支付类型
-    private int payType = 0;
+    private int payType;
 
 
 }

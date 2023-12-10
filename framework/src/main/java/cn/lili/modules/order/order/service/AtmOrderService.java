@@ -1,6 +1,7 @@
 package cn.lili.modules.order.order.service;
 
 import cn.lili.modules.order.order.entity.dos.AtmOrder;
+import cn.lili.modules.order.order.entity.dto.AtmOrderDTO;
 import cn.lili.modules.order.order.entity.dto.AtmOrderSearchParams;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -11,7 +12,7 @@ public interface AtmOrderService extends IService<AtmOrder> {
     /**
      * 查询列表
      */
-    List<AtmOrder> queryList(AtmOrderSearchParams atmOrderSearchParams);
+    List<AtmOrderDTO> queryList(AtmOrderSearchParams atmOrderSearchParams);
 
     //创建购买订单
     int createBuyOrder(AtmOrder atmOrder);
