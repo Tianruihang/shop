@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ExchangeRuleServiceImpl extends ServiceImpl<ExchangeRuleMapper, ExchangeRule> implements ExchangeRuleService {
 
@@ -35,4 +37,10 @@ public class ExchangeRuleServiceImpl extends ServiceImpl<ExchangeRuleMapper, Exc
         exchangeRule.setLast(true);
         return this.baseMapper.selectOne(exchangeRule.queryWrapper());
     }
+
+    @Override
+    public List<ExchangeRule> queryMaxPriceList() {
+        return this.baseMapper.queryMaxPriceList();
+    }
+
 }

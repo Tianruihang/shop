@@ -59,4 +59,10 @@ public class AtmOrderController {
     public ResultMessage<ExchangeRule> lastRule() {
         return ResultUtil.data(exchangeRuleService.queryLast());
     }
+
+    //获取规则列表
+    @GetMapping("ruleList")
+    public ResultMessage<List<ExchangeRule>> ruleList() {
+        return ResultUtil.data(exchangeRuleService.queryMaxPriceList());
+    }
 }
