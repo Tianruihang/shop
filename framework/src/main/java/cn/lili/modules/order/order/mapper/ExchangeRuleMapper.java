@@ -9,6 +9,6 @@ import java.util.List;
 public interface ExchangeRuleMapper extends BaseMapper<ExchangeRule> {
 
     //查询规则表max_usual_price字段最近四条记录
-    @Select("select max_usual_price from atm_exchange_rule order by create_time desc limit 4")
+    @Select("select * from atm_exchange_rule order by create_time desc limit 4")
     List<ExchangeRule> queryMaxPriceList();
 }
