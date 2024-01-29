@@ -37,7 +37,7 @@ public class ExchangeRuleServiceImpl extends ServiceImpl<ExchangeRuleMapper, Exc
         exchangeRule.setLast(true);
         return this.baseMapper.selectOne(exchangeRule.queryWrapper());
     }
-
+;
     @Override
     public List<ExchangeRule> queryMaxPriceList() {
         return this.baseMapper.queryMaxPriceList();

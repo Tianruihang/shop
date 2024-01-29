@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @TableName("atm_user_points")
 @ApiModel(value = "会员积分")
@@ -27,6 +29,9 @@ public class AtmUserPoints extends BaseEntity {
 
     @ApiModelProperty(value = "钻石")
     private int num;//钻石
+
+    @ApiModelProperty(value = "会员余额")
+    private BigDecimal wallet;//余额
 
     @ApiModelProperty(value = "会员推荐人数")
     private String userNum;//推荐人数

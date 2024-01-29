@@ -15,6 +15,7 @@ public class ExchangeRuleSearchParams extends PageVO {
 
     private static final long serialVersionUID = 2233811628066468683L;
 
+    private String id;
     //最小通常价格
     private BigDecimal minUsualPrice;
     //最大通常价格
@@ -55,8 +56,10 @@ public class ExchangeRuleSearchParams extends PageVO {
     public <T> QueryWrapper<T> queryWrapper(){
         QueryWrapper<T> wrapper = new QueryWrapper<>();
         //查询最后一条数据
-        if (last)
-            wrapper.orderByDesc("create_time");
+        if (last){
+            wrapper.orderByDesc("create_time").last("limit 1");
+            return wrapper;
+        }
         return new QueryWrapper<>();
     }
 
