@@ -9,4 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AtmUserPointsServiceImpl extends ServiceImpl<AtmUserPointsMapper, AtmUserPoints> implements AtmUserPointsService {
 
+    //根据userId查询用户积分
+    @Override
+    public AtmUserPoints queryByUserId(String userId) {
+        return this.baseMapper.selectOne(this.lambdaQuery().eq(AtmUserPoints::getUserId, userId));
+    }
 }

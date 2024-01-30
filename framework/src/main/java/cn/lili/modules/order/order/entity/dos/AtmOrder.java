@@ -34,7 +34,7 @@ public class AtmOrder extends BaseEntity {
     //支付时间
     private Date payTime;
     //手续费
-    private int charge;
+    private BigDecimal charge;
     //支付类型
     private int payType;
     //支付截图
