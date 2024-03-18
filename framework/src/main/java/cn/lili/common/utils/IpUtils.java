@@ -55,7 +55,7 @@ public class IpUtils {
             }
         }
         if ("0:0:0:0:0:0:0:1".equals(ip)) {
-            ip = "106.124.130.167";
+            ip = "127.0.0.1";
         }
         return ip;
     }

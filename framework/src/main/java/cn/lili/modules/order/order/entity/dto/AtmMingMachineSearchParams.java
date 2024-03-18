@@ -19,6 +19,7 @@ public class AtmMingMachineSearchParams extends PageVO {
     private BigDecimal sumPoints;
     private int power;
     private String payType;
+    private String UserId;
 
     public <T> QueryWrapper<T> queryWrapper(){
         QueryWrapper<T> wrapper = new QueryWrapper<>();

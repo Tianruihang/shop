@@ -2,6 +2,7 @@ package cn.lili.modules.order.order.service;
 
 import cn.lili.modules.order.order.entity.dos.AtmMingMachine;
 import cn.lili.modules.order.order.entity.dto.AtmMingMachineSearchParams;
+import cn.lili.modules.order.order.entity.dto.AtmMingMachineUserDTO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -18,4 +19,7 @@ public interface AtmMingMachineService extends IService<AtmMingMachine> {
 
         //查询
         IPage<AtmMingMachine> queryPage(AtmMingMachineSearchParams atmMingMachineSearchParams);
+
+        //详情
+        AtmMingMachine queryById(AtmMingMachineUserDTO atmMingMachineUserDTO);
 }
