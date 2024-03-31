@@ -42,6 +42,7 @@ public class AtmMingMachineUserServiceImpl extends ServiceImpl<AtmUserMachineMap
 
     @Override
     public List<AtmMingMachineUserDTO> queryListByUserId(AtmMingMachineUserDTO atmMingMachineUserDTO) {
+
         return atmUserMachineMapper.queryByUserId(atmMingMachineUserDTO.queryWrapper());
     }
 

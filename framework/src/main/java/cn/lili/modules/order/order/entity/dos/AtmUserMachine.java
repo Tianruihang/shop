@@ -16,7 +16,7 @@ public class AtmUserMachine extends BaseEntity {
 
     String id;
     String userId;
-    String MachineId;
+    String machineId;
     Date createTime;
     Date endTime;
 }

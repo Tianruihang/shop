@@ -16,6 +16,7 @@ public class AtmMingMachine extends BaseEntity {
     private String name;
     private BigDecimal price;
     private int limitHours;
+    private int limitNum;
     private int type;
     private BigDecimal hourPoints;
     private BigDecimal sumPoints;

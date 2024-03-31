@@ -16,12 +16,12 @@ import java.util.List;
 public interface AtmUserMachineMapper extends BaseMapper<AtmUserMachine> {
 
     //联合查询根据atm_user_machine表的user_id查询atm_ming_machine表的machine_id
-    @Select("select * from atm_user_machine left join atm_ming_machine on atm_user_machine.machine_id = atm_ming_machine.id where ${ew.customSqlSegment}")
+    @Select("select * from atm_user_machine left join atm_mining_machine on atm_user_machine.machine_id = atm_mining_machine.id ${ew.customSqlSegment}")
     List<AtmMingMachineUserDTO> queryByUserId(@Param(Constants.WRAPPER) Wrapper<AtmMingMachineUserDTO> queryWrapper);
 
-    @Select("select * from atm_ming_machine where ${ew.customSqlSegment}")
+    @Select("select * from atm_mining_machine where ${ew.customSqlSegment}")
     List<AtmMingMachineUserDTO> selectMachineList(@Param(Constants.WRAPPER) Wrapper<AtmMingMachineUserDTO> queryWrapper);
 
-    @Select("select * from atm_ming_machine left join atm_user_machine on atm_ming_machine.id = atm_user_machine.machine_id where ${ew.customSqlSegment} limit 1")
+    @Select("select * from atm_mining_machine left join atm_user_machine on atm_mining_machine.id = atm_user_machine.machine_id ${ew.customSqlSegment} limit 1")
     AtmMingMachineUserDTO selectMachineListByUserId(@Param(Constants.WRAPPER) Wrapper<AtmMingMachineUserDTO> queryWrapper);
 }

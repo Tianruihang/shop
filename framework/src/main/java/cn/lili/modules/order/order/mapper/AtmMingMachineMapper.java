@@ -16,4 +16,6 @@ import java.util.List;
 public interface AtmMingMachineMapper extends BaseMapper<AtmMingMachine> {
 
 
+    @Select("select * from atm_mining_machine ${ew.customSqlSegment}")
+    List<AtmMingMachineUserDTO> queryList(@Param(Constants.WRAPPER) Wrapper<AtmMingMachineUserDTO> wrapper);
 }

@@ -52,7 +52,7 @@ spring:
 
   # Redis
   redis:
-    host: 114.115.136.5
+    host: 127.0.0.1
     port: 6379
     password: lilishop
     lettuce:
@@ -73,7 +73,7 @@ spring:
       default-datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://114.115.136.5:3306/lilishop?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+        url: jdbc:mysql://127.0.0.1:3306/lilishop?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
         username: root
         password: lilishop
         maxActive: 50
@@ -253,7 +253,7 @@ lili:
     #        username: elastic
     #        password: LiLiShopES
     logstash:
-      server: 192.168.0.116:4560
+      server: 127.0.0.1:4560
     rocketmq:
       promotion-topic: lili_promotion_topic
       promotion-group: lili_promotion_group

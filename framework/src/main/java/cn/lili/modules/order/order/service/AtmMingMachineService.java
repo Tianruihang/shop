@@ -6,6 +6,8 @@ import cn.lili.modules.order.order.entity.dto.AtmMingMachineUserDTO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 public interface AtmMingMachineService extends IService<AtmMingMachine> {
 
         //添加
@@ -19,6 +21,8 @@ public interface AtmMingMachineService extends IService<AtmMingMachine> {
 
         //查询
         IPage<AtmMingMachine> queryPage(AtmMingMachineSearchParams atmMingMachineSearchParams);
+
+        List<AtmMingMachineUserDTO> queryList(AtmMingMachineUserDTO atmMingMachineUserDTO);
 
         //详情
         AtmMingMachine queryById(AtmMingMachineUserDTO atmMingMachineUserDTO);
