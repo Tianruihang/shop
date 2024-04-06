@@ -25,12 +25,8 @@ public class AtmUserRechageController {
     //新增接口
     @PostMapping
     public ResultMessage<Object> save(AtmUserRecharge atmUserRecharge) {
+        atmUserRecharge.setStatus(0);
         atmUserRechargeService.save(atmUserRecharge);
-        //将用户金额保存到用户表中
-        AtmUserPoints atmUserPoints = new AtmUserPoints();
-        atmUserPoints.setUserId(atmUserRecharge.getUserId());
-        atmUserPoints.setWallet(atmUserRecharge.getNum());
-        atmUserPointsService.save(atmUserPoints);
         return ResultUtil.success();
     }
 

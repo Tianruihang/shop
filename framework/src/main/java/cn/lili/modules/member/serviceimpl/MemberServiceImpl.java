@@ -59,6 +59,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -123,6 +124,13 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         return this.baseMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public Member findByShareId(String shareId) {
+        QueryWrapper<Member> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("share_id", shareId);
+        return this.baseMapper.selectOne(queryWrapper);
+    }
+
 
     @Override
     public Member getUserInfo() {
@@ -166,6 +174,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             BeanUtil.copyProperties(memberAuthDTO, atmUserPoints);
             atmUserPoints.setUserId(tokenUser.getId());
             atmUserPoints.setCreateTime(new Date());
+            atmUserPoints.setWallet(new BigDecimal(0));
+            atmUserPoints.setGrade("1");
             atmUserPointsService.save(atmUserPoints);
         }else {
             BeanUtil.copyProperties(memberAuthDTO, atmUserPoints);
@@ -347,6 +357,15 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     @Transactional
     public void registerHandler(Member member) {
         member.setId(SnowFlake.getIdStr());
+        // 生成一个UUID
+        UUID uuid = UUID.randomUUID();
+        // 将UUID转换为字符串
+        String uuidStr = uuid.toString();
+        // 假设我们要获取前10位
+        int requiredLength = 10;
+        // 截取字符串
+        String shortUUID = uuidStr.substring(0, requiredLength);
+        member.setShareId(shortUUID);
         //保存会员
         this.save(member);
         UserContext.settingInviter(member.getId(), cache);
@@ -448,11 +467,49 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Override
     @Transactional
-    public Token register(String userName, String password, String mobilePhone) {
+    public Token register(String userName, String password, String mobilePhone, String code) {
         //检测会员信息
         checkMember(userName, mobilePhone);
         //设置会员信息
         Member member = new Member(userName, new BCryptPasswordEncoder().encode(password), mobilePhone);
+        //创建用户积分表
+        AtmUserPoints atmUserPoints = new AtmUserPoints();
+        atmUserPoints.setUserId(member.getId());
+        atmUserPoints.setCreateTime(new Date());
+        atmUserPoints.setWallet(new BigDecimal(0));
+        atmUserPoints.setGrade("1");
+        atmUserPointsService.save(atmUserPoints);
+        //判断邀请人是否满足10人 15人 20人 30人 50人
+        Member inviteMember = this.findByShareId(code);
+        //根据inviteMember查询用户是否存在
+        if (inviteMember == null) {
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }else {
+            AtmUserPoints atmUserPoints1 = atmUserPointsService.getOne(Wrappers.<AtmUserPoints>lambdaQuery().eq(AtmUserPoints::getUserId, inviteMember.getId()));
+            //根据code查询atmUserPoints的数量
+            long count = atmUserPointsService.count(Wrappers.<AtmUserPoints>lambdaQuery().eq(AtmUserPoints::getShareId, code));
+            //如果count为10 15 20 30 50 提升用户等级
+            switch ((int) count) {
+                case 10:
+                    atmUserPoints1.setGrade("2");
+                    break;
+                case 15:
+                    atmUserPoints1.setGrade("3");
+                    break;
+                case 20:
+                    atmUserPoints1.setGrade("4");
+                    break;
+                case 30:
+                    atmUserPoints1.setGrade("5");
+                    break;
+                case 50:
+                    atmUserPoints1.setGrade("6");
+                    break;
+                default:
+                    break;
+            }
+            atmUserPointsService.updateById(atmUserPoints1);
+        }
         //注册成功后用户自动登录
         registerHandler(member);
         return memberTokenGenerate.createToken(member, false);
@@ -561,7 +618,14 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
                 memberSearchVO.getDisabled().equals(SwitchEnum.OPEN.name()) ? 1 : 0);
         queryWrapper.isNotNull("a.status");
         queryWrapper.orderByDesc("create_time");
-        return this.baseMapper.pageByMemberAuthVO(PageUtil.initPage(page), queryWrapper);
+        IPage<MemberAuthVO> memberAuthVOIPage = this.baseMapper.pageByMemberAuthVO(PageUtil.initPage(page), queryWrapper);
+        //将memberAuthVOIPage中的InviteId查询对应用户信息
+        memberAuthVOIPage.getRecords().forEach(memberAuthVO -> {
+            Member member = this.getById(memberAuthVO.getInviteId());
+            memberAuthVO.setInviteName(member.getUsername());
+            memberAuthVO.setInviteMobile(member.getMobile());
+        });
+        return memberAuthVOIPage;
     }
 
     @Override

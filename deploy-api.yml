@@ -390,7 +390,7 @@ data:
         #        password: LiLiShopES
 
         logstash:
-          server: logstash-service.lilishop-middleware:4560
+          server: logstash-service.lilishop-middleware:5044
         rocketmq:
           promotion-topic: lili_promotion_topic
           promotion-group: lili_promotion_group

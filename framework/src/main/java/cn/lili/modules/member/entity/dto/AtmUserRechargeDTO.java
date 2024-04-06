@@ -1,5 +1,8 @@
 package cn.lili.modules.member.entity.dto;
 
+import cn.lili.common.security.AuthUser;
+import cn.lili.common.security.context.UserContext;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -17,5 +20,14 @@ public class AtmUserRechargeDTO implements Serializable {
     private int num;//充币数量
     private String fileImg;//上传凭证
     private int status;//状态
+
+    public <AtmUserRechargeDTO> QueryWrapper<AtmUserRechargeDTO> queryWrapper(){
+        QueryWrapper<AtmUserRechargeDTO> wrapper = new QueryWrapper<>();
+        if (status == 3){
+
+        }else
+            wrapper.eq("au.status", status);
+        return wrapper;
+    }
 
 }

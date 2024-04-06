@@ -122,6 +122,15 @@ public class MemberAuthVO implements Serializable {
     @ApiModelProperty(value = "分享人Id")
     private String shareId; //分享人Id
 
+    @ApiModelProperty(value = "邀请人")
+    private String inviteId; //邀请人
+
+    @ApiModelProperty(value = "邀请人")
+    private String inviteName; //邀请人
+
+    @ApiModelProperty(value = "邀请人手机号")
+    private String inviteMobile; //邀请人
+
     @ApiModelProperty(value = "算力")
     private String userPower;//算力
 

@@ -56,6 +56,14 @@ public interface MemberService extends IService<Member> {
      */
     Member findByUsername(String username);
 
+/**
+     * 通过shareId获取用户
+     *
+     * @param shareId 用户分享Id
+     * @return 会员信息
+     */
+    Member findByShareId(String shareId);
+
     /**
      * 登录：用户名、密码登录
      *
@@ -115,7 +123,7 @@ public interface MemberService extends IService<Member> {
      * @param mobilePhone mobilePhone
      * @return 处理结果
      */
-    Token register(String userName, String password, String mobilePhone);
+    Token register(String userName, String password, String mobilePhone,String code);
 
     /**
      * 是否可以初始化密码

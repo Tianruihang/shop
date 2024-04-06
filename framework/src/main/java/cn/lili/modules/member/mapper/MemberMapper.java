@@ -32,7 +32,7 @@ public interface MemberMapper extends BaseMapper<Member> {
     IPage<MemberVO> pageByMemberVO(IPage<MemberVO> page, @Param(Constants.WRAPPER) Wrapper<Member> queryWrapper);
 
     //li_mebmer表中id与atm_user_points表中user_id关联查询
-    @Select("select m.*,a.id as pointId,a.user_id,a.true_name,a.id_card_num,a.on_img,a.back_img,a.auth_img,a.zfb_img,a.we_chat_img,a.status" +
+    @Select("select m.*,a.id as pointId,a.user_id,a.true_name,a.id_card_num,a.on_img,a.back_img,a.auth_img,a.zfb_img,a.we_chat_img,a.status,a.share_id as inviteId" +
             " from li_member m left join atm_user_points a on m.id=a.user_id ${ew.customSqlSegment}")
     IPage<MemberAuthVO> pageByMemberAuthVO(IPage<MemberAuthVO> page, @Param(Constants.WRAPPER) Wrapper<Member> queryWrapper);
 
