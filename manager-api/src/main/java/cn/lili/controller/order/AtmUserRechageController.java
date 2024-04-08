@@ -46,18 +46,20 @@ public class AtmUserRechageController {
             atmUserPointsService.updateById(atmUserPoints);
             //查找用户shareId并找到对应用户，将钱加到对应用户的钱包中
             Member member = memberService.findByShareId(atmUserPoints.getShareId());
-            //根据member的id查找用户的钱包
-            AtmUserPoints atmUserPoints1 = atmUserPointsService.queryByUserId(member.getId());
-            //将用户充值的钱 * 20%提成 加到用户的钱包中
-            atmUserPoints1.setWallet(atmUserPoints1.getWallet().add(atmUserRecharge.getNum().multiply(new BigDecimal(0.2))));
-            atmUserPointsService.updateById(atmUserPoints1);
+            if (member != null) {
+                //根据member的id查找用户的钱包
+                AtmUserPoints atmUserPoints1 = atmUserPointsService.queryByUserId(member.getId());
+                //将用户充值的钱 * 20%提成 加到用户的钱包中
+                atmUserPoints1.setWallet(atmUserPoints1.getWallet().add(atmUserRecharge.getNum().multiply(new BigDecimal(0.2))));
+                atmUserPointsService.updateById(atmUserPoints1);
+            }
         }
         return ResultUtil.success();
     }
 
     //列表接口
     @GetMapping("list")
-    public ResultMessage<IPage<MemberWalletVO>> list(PageVO page, AtmUserRechargeDTO atmUserRecharge) {
+    public ResultMessage<IPage<MemberWalletVO>> list(AtmUserRechargeDTO atmUserRecharge,PageVO page) {
         return ResultUtil.data(atmUserRechargeService.pageByAtmUserRecharge(PageUtil.initPage(page), atmUserRecharge.queryWrapper()));
     }
 

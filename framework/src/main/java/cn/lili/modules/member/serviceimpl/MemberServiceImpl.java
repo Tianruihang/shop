@@ -622,8 +622,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         //将memberAuthVOIPage中的InviteId查询对应用户信息
         memberAuthVOIPage.getRecords().forEach(memberAuthVO -> {
             Member member = this.getById(memberAuthVO.getInviteId());
-            memberAuthVO.setInviteName(member.getUsername());
-            memberAuthVO.setInviteMobile(member.getMobile());
+            if (member != null) {
+                memberAuthVO.setInviteName(member.getUsername());
+                memberAuthVO.setInviteMobile(member.getMobile());
+            }
         });
         return memberAuthVOIPage;
     }

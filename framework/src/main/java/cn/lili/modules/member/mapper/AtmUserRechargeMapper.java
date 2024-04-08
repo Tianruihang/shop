@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Select;
 
 public interface AtmUserRechargeMapper extends BaseMapper<AtmUserRecharge> {
 
-    @Select("select m.*,au.userId,au.num,au.fileImg,au.status from atm_user_recharge au left join li_member m on au.user_id = m.id ${ew.customSqlSegment}")
+    @Select("select au.id,m.*,au.user_id,au.num,au.file_img,au.status from atm_user_recharge au left join li_member m on au.user_id = m.id ${ew.customSqlSegment}")
     IPage<MemberWalletVO> pageByAtmUserRecharge(IPage<AtmUserRechargeDTO> page,@Param(Constants.WRAPPER) Wrapper<Member> queryWrapper);
 }
