@@ -613,6 +613,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         queryWrapper.like(CharSequenceUtil.isNotBlank(memberSearchVO.getNickName()), "nick_name", memberSearchVO.getNickName());
         //按照电话号码查询
         queryWrapper.like(CharSequenceUtil.isNotBlank(memberSearchVO.getMobile()), "mobile", memberSearchVO.getMobile());
+        //查询会员审核状态
+        if (memberSearchVO.getStatus() != -1)
+            queryWrapper.eq( "status", memberSearchVO.getStatus());
         //按照会员状态查询
         queryWrapper.eq(CharSequenceUtil.isNotBlank(memberSearchVO.getDisabled()), "disabled",
                 memberSearchVO.getDisabled().equals(SwitchEnum.OPEN.name()) ? 1 : 0);
@@ -621,7 +624,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         IPage<MemberAuthVO> memberAuthVOIPage = this.baseMapper.pageByMemberAuthVO(PageUtil.initPage(page), queryWrapper);
         //将memberAuthVOIPage中的InviteId查询对应用户信息
         memberAuthVOIPage.getRecords().forEach(memberAuthVO -> {
-            Member member = this.getById(memberAuthVO.getInviteId());
+            //根据memberAuthVO的inviteId查询shareId
+            MemberVO member = this.baseMapper.getByMemberVO(memberAuthVO.getInviteId());
             if (member != null) {
                 memberAuthVO.setInviteName(member.getUsername());
                 memberAuthVO.setInviteMobile(member.getMobile());

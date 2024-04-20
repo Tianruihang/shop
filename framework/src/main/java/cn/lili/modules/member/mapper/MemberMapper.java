@@ -28,6 +28,13 @@ public interface MemberMapper extends BaseMapper<Member> {
     @Select("select m.mobile from li_member m")
     List<String> getAllMemberMobile();
 
+    /**
+     * 获取会员信息根据会员shareId
+     * @return
+     */
+    @Select("select * from li_member where share_id=#{shareId}")
+    MemberVO getByMemberVO(@Param("shareId")String shareId);
+
     @Select("select * from li_member ${ew.customSqlSegment}")
     IPage<MemberVO> pageByMemberVO(IPage<MemberVO> page, @Param(Constants.WRAPPER) Wrapper<Member> queryWrapper);
 
