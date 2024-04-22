@@ -16,7 +16,8 @@ public class AtmUserRechargeDTO implements Serializable {
     private String id;
     //用户id
     private String userId;
-    private int type; //币种类型
+    private int type; //充币为0 提币为1
+    private String cashType;//币种类型
     private int num;//充币数量
     private String fileImg;//上传凭证
     private int status;//状态
@@ -27,6 +28,8 @@ public class AtmUserRechargeDTO implements Serializable {
 
         }else
             wrapper.eq("au.status", status);
+        if (type != -1)
+            wrapper.eq("au.type", type);
         return wrapper;
     }
 

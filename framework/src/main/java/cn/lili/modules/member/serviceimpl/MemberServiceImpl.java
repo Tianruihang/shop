@@ -34,6 +34,10 @@ import cn.lili.modules.member.service.AtmUserPointsService;
 import cn.lili.modules.member.service.MemberService;
 import cn.lili.modules.member.token.MemberTokenGenerate;
 import cn.lili.modules.member.token.StoreTokenGenerate;
+import cn.lili.modules.order.order.entity.dos.AtmMingMachine;
+import cn.lili.modules.order.order.entity.dos.AtmUserMachine;
+import cn.lili.modules.order.order.service.AtmMingMachineService;
+import cn.lili.modules.order.order.service.AtmMingMachineUserService;
 import cn.lili.modules.store.entity.dos.Store;
 import cn.lili.modules.store.entity.enums.StoreStatusEnum;
 import cn.lili.modules.store.service.StoreService;
@@ -111,6 +115,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private SettingService settingService;
+    @Autowired
+    private AtmMingMachineService atmMingMachineService;
+    @Autowired
+    private AtmMingMachineUserService atmMingMachineUserService;
     /**
      * 缓存
      */
@@ -368,6 +376,20 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         member.setShareId(shortUUID);
         //保存会员
         this.save(member);
+        //根据machineId查询矿机信息
+        AtmMingMachine atmMingMachine = atmMingMachineService.getById("1");
+
+        //赠送矿机
+        AtmUserMachine atmUserMachine = new AtmUserMachine();
+        atmUserMachine.setUserId(member.getId());
+        atmUserMachine.setMachineId("1");
+        atmUserMachine.setCreateTime(new Date());
+        Date endTime = new Date();
+        //获取矿机时间atmMingMachine.getlimitHour()累加到当前时间
+        endTime.setTime(endTime.getTime() + atmMingMachine.getLimitHours() * 60 * 60 * 1000);
+        atmUserMachine.setEndTime(endTime);
+        //保存
+        atmMingMachineUserService.add(atmUserMachine);
         UserContext.settingInviter(member.getId(), cache);
         // 发送会员注册信息
         applicationEventPublisher.publishEvent(new TransactionCommitSendMQEvent("new member register", rocketmqCustomProperties.getMemberTopic(),
