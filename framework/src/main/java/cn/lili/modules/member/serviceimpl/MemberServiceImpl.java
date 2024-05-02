@@ -36,6 +36,7 @@ import cn.lili.modules.member.token.MemberTokenGenerate;
 import cn.lili.modules.member.token.StoreTokenGenerate;
 import cn.lili.modules.order.order.entity.dos.AtmMingMachine;
 import cn.lili.modules.order.order.entity.dos.AtmUserMachine;
+import cn.lili.modules.order.order.entity.dto.AtmMingMachineUserDTO;
 import cn.lili.modules.order.order.service.AtmMingMachineService;
 import cn.lili.modules.order.order.service.AtmMingMachineUserService;
 import cn.lili.modules.store.entity.dos.Store;
@@ -364,7 +365,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
      */
     @Transactional
     public void registerHandler(Member member) {
-        member.setId(SnowFlake.getIdStr());
+
         // 生成一个UUID
         UUID uuid = UUID.randomUUID();
         // 将UUID转换为字符串
@@ -489,16 +490,19 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Override
     @Transactional
-    public Token register(String userName, String password, String mobilePhone, String code) {
+    public Token register(String userName, String password, String mobilePhone,String name,String idCard, String code) {
         //检测会员信息
         checkMember(userName, mobilePhone);
         //设置会员信息
         Member member = new Member(userName, new BCryptPasswordEncoder().encode(password), mobilePhone);
+        member.setId(SnowFlake.getIdStr());
         //创建用户积分表
         AtmUserPoints atmUserPoints = new AtmUserPoints();
         atmUserPoints.setUserId(member.getId());
         atmUserPoints.setCreateTime(new Date());
         atmUserPoints.setWallet(new BigDecimal(0));
+        atmUserPoints.setTrueName(name);
+        atmUserPoints.setIdCardNum(idCard);
         atmUserPoints.setGrade("1");
         atmUserPointsService.save(atmUserPoints);
         //判断邀请人是否满足10人 15人 20人 30人 50人
@@ -698,22 +702,25 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     public List<MemberPointMessage> pointList(String userId){
         List<MemberPointMessage> memberPointMessages = new ArrayList<>();
-        //获取积分设置
-        PointSetting pointSetting = getPointSetting();
-        //获取用户积分
-        //查询Redis内积分队列
         //24小时分成24个类型查询对应数值
         String keyName = KEY_AUTH_NAME + userId + "_";
-        //24个类型
-        for (int i = 0; i < 24; i++) {
-            boolean keyBool =  stringRedisTemplate.hasKey(keyName + i);
-            if (keyBool){
-                MemberPointMessage memberPointMessage = new MemberPointMessage();
-                memberPointMessage.setPoint(pointSetting.getAuthDaily().longValue());
-                memberPointMessage.setPointName(stringRedisTemplate.opsForValue().get(keyName + i));
-                memberPointMessages.add(memberPointMessage);
+        //获取用户拥有矿机
+        AtmMingMachineUserDTO atmMingMachineUserDTO = new AtmMingMachineUserDTO();
+        atmMingMachineUserDTO.setUserId(userId);
+        List<AtmMingMachineUserDTO> atmMingMachineUserDTOS = atmMingMachineUserService.queryListByUserId(atmMingMachineUserDTO);
+        //查询用户积分
+        atmMingMachineUserDTOS.stream().forEach(atmMingMachineUserDTO1 -> {
+            //24个类型
+            for (int i = 0; i < 24; i++) {
+                boolean keyBool =  stringRedisTemplate.hasKey(keyName + atmMingMachineUserDTO1.getMachineId() + i);
+                if (keyBool){
+                    MemberPointMessage memberPointMessage = new MemberPointMessage();
+                    memberPointMessage.setPoint(atmMingMachineUserDTO1.getHourPoints().longValue());
+                    memberPointMessage.setPointName(stringRedisTemplate.opsForValue().get(keyName + atmMingMachineUserDTO1.getMachineId() + i));
+                    memberPointMessages.add(memberPointMessage);
+                }
             }
-        }
+        });
 
         return memberPointMessages;
 

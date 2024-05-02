@@ -123,7 +123,7 @@ public interface MemberService extends IService<Member> {
      * @param mobilePhone mobilePhone
      * @return 处理结果
      */
-    Token register(String userName, String password, String mobilePhone,String code);
+    Token register(String userName, String password, String mobilePhone,String name,String idCard,String code);
 
     /**
      * 是否可以初始化密码

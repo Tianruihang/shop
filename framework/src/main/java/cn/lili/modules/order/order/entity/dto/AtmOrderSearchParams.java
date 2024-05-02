@@ -39,6 +39,10 @@ public class AtmOrderSearchParams {
     private int charge;
     //支付类型
     private int payType;
+    //订单类型
+    private int type;
+    //查看其他用户订单
+    private Integer otherOrder;
 
 
 }

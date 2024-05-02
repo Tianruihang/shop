@@ -21,4 +21,7 @@ public interface AtmOrderService extends IService<AtmOrder> {
     int payOrder(AtmOrder atmOrder);
 
     int updateOrder(AtmOrder atmOrder);
+
+    //查询用户未完成的订单
+    List<AtmOrder> queryUnfinishedOrder(String userId,int type);
 }

@@ -43,8 +43,8 @@ public class ExchangeRuleController {
     }
 
     @GetMapping("lastRule")
-    public ResultMessage<ExchangeRule> lastRule() {
-        return ResultUtil.data(exchangeRuleService.queryLast());
+    public ResultMessage<ExchangeRule> lastRule(ExchangeRuleSearchParams exchangeRule) {
+        return ResultUtil.data(exchangeRuleService.queryLast(exchangeRule));
     }
 
 }

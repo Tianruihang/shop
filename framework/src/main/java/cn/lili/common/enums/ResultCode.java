@@ -205,7 +205,8 @@ public enum ResultCode {
     POINT_NOT_ENOUGH(31015, "当前会员积分不足购买当前积分商品！"),
     ORDER_LABEL_ORDER_ERROR(31016, "订单不能打印电子面单"),
     ORDER_PRICE_ERROR(31017,"订单金额不能小于等于0"),
-
+    ORDER_UNFINISHED(31018, "当前用户有未完成的订单，请先完成或取消"),
+    USER_POINTS_NOT_ENOUGH(31019, "用户积分不足"),
 
     /**
      * 支付

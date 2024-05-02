@@ -19,6 +19,8 @@ public class AtmOrderDTO implements Serializable {
     private String userId;
     //购买用户id
     private String payUserId;
+    //订单类型 0 平价区 1 溢价区
+    private int type;
     //数量
     private int num;
     //卖出价格
@@ -41,14 +43,19 @@ public class AtmOrderDTO implements Serializable {
     private String face;
     //订单id
     private String orderId;
+    //其他用户订单
+    private Integer otherOrder;
 
     public <AtmOrder> QueryWrapper<AtmOrder> queryWrapper(){
         AuthUser currentUser = UserContext.getCurrentUser();
         QueryWrapper<AtmOrder> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
         if (userId != null)
             wrapper.eq("user_id", userId);
         if (payUserId != null)
             wrapper.eq("pay_user_id", payUserId);
+        if (otherOrder != null && otherOrder == 1)
+            wrapper.ne("user_id", currentUser.getId());
 //        wrapper.eq("user_id", currentUser.getId());
         //根据支付类型查询
         if (payType != null)

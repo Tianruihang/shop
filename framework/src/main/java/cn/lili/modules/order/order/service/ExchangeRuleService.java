@@ -19,8 +19,8 @@ public interface ExchangeRuleService extends IService<ExchangeRule> {
     void update(ExchangeRule exchangeRule);
 
     //查询最近一条记录
-    ExchangeRule queryLast();
+    ExchangeRule queryLast(ExchangeRuleSearchParams exchangeRule);
 
     //查询规则表中最高的价格列表
-    List<ExchangeRule> queryMaxPriceList();
+    List<ExchangeRule> queryMaxPriceList(ExchangeRuleSearchParams exchangeRule);
 }

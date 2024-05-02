@@ -168,14 +168,16 @@ public class MemberBuyerController {
     @PostMapping("/register")
     public ResultMessage<Object> register(@NotNull(message = "用户名不能为空") @RequestParam String username,
                                           @NotNull(message = "密码不能为空") @RequestParam String password,
+                                          @NotNull(message = "用户姓名不能为空")@RequestParam String name,
+                                          @NotNull(message = "身份证号不能为空")@RequestParam String idCard,
                                           @NotNull(message = "手机号为空") @RequestParam String mobilePhone,
                                           @NotNull(message = "邀请码为空") @RequestParam String shareId,
                                           @RequestHeader String uuid,
                                           @RequestParam String code) {
         if (StringUtils.isEmpty(code)){
-            return ResultUtil.data(memberService.register(username, password, mobilePhone,shareId));
+            return ResultUtil.data(memberService.register(username, password, mobilePhone,name,idCard,shareId));
         } else if (smsUtil.verifyCode(mobilePhone, VerificationEnums.REGISTER, uuid, code)) {
-            return ResultUtil.data(memberService.register(username, password, mobilePhone,shareId));
+            return ResultUtil.data(memberService.register(username, password, mobilePhone,name,idCard,shareId));
         } else {
             throw new ServiceException(ResultCode.VERIFICATION_SMS_CHECKED_ERROR);
         }
