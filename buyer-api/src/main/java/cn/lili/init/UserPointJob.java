@@ -28,7 +28,7 @@ public class UserPointJob {
     private AtmMingMachineUserService atmMingMachineUserService;
 
     //每小时生产积分
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void userPointJob() {
         log.info("用户日积分定时更新");
         //获取所有实名认证用户
