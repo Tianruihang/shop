@@ -12,10 +12,12 @@ import cn.lili.modules.member.service.AtmUserPointsService;
 import cn.lili.modules.order.order.entity.dos.AtmOrder;
 import cn.lili.modules.order.order.entity.dos.AtmUserMachine;
 import cn.lili.modules.order.order.entity.dos.ExchangeRule;
+import cn.lili.modules.order.order.entity.dto.AtmMingMachineUserDTO;
 import cn.lili.modules.order.order.entity.dto.AtmOrderDTO;
 import cn.lili.modules.order.order.entity.dto.AtmOrderSearchParams;
 import cn.lili.modules.order.order.entity.dto.ExchangeRuleSearchParams;
 import cn.lili.modules.order.order.mapper.AtmOrderMapper;
+import cn.lili.modules.order.order.service.AtmMingMachineUserService;
 import cn.lili.modules.order.order.service.AtmOrderService;
 import cn.lili.modules.order.order.service.ExchangeRuleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -36,6 +38,8 @@ public class AtmOrderServiceImpl extends ServiceImpl<AtmOrderMapper, AtmOrder> i
     private ExchangeRuleService exchangeRuleService;
     @Autowired
     private AtmUserPointsService atmUserPointsService;
+    @Autowired
+    private AtmMingMachineUserService atmMingMachineUserService;
 
     @Override
     public List<AtmOrderDTO> queryList(AtmOrderSearchParams atmOrderSearchParams) {
@@ -47,10 +51,15 @@ public class AtmOrderServiceImpl extends ServiceImpl<AtmOrderMapper, AtmOrder> i
     @Override
     public int createBuyOrder(AtmOrder atmOrder) {
         AuthUser currentUser = UserContext.getCurrentUser();
-        //查询用户等级
-        AtmUserPoints atmUserPoints = atmUserPointsService.queryByUserId(currentUser.getId());
         if (atmOrder.getType() == 1){
-            //查询用户等级规则
+            //查询用户矿机
+            AtmMingMachineUserDTO atmMingMachineUserDTO = new AtmMingMachineUserDTO();
+            atmMingMachineUserDTO.setUserId(currentUser.getId());
+            atmMingMachineUserDTO.setMachineId("2");  //当矿机ID为2的时候 为尊贵的vip用户 才可以再溢价区购买
+            AtmMingMachineUserDTO atmUserMachine = atmMingMachineUserService.queryByUserId(atmMingMachineUserDTO);
+            if (atmUserMachine == null){
+                throw new ServiceException(ResultCode.USER_NOT_VIP);
+            }
 
         }
         //获取交易规则 查询订单类型 0 平价区 1 溢价区

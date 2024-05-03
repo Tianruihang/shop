@@ -3,10 +3,12 @@ package cn.lili.modules.member.serviceimpl;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.lili.common.vo.PageVO;
+import cn.lili.modules.member.entity.dos.AtmUserPoints;
 import cn.lili.modules.member.entity.dos.Member;
 import cn.lili.modules.member.entity.dos.MemberPointsHistory;
 import cn.lili.modules.member.entity.vo.MemberPointsHistoryVO;
 import cn.lili.modules.member.mapper.MemberPointsHistoryMapper;
+import cn.lili.modules.member.service.AtmUserPointsService;
 import cn.lili.modules.member.service.MemberPointsHistoryService;
 import cn.lili.modules.member.service.MemberService;
 import cn.lili.mybatis.util.PageUtil;
@@ -28,15 +30,18 @@ public class MemberPointsHistoryServiceImpl extends ServiceImpl<MemberPointsHist
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private AtmUserPointsService atmUserPointsService;
 
     @Override
     public MemberPointsHistoryVO getMemberPointsHistoryVO(String memberId) {
         //获取会员积分历史
         Member member = memberService.getById(memberId);
+        //获取用户atm积分
+        AtmUserPoints atmUserPoints = atmUserPointsService.queryByUserId(memberId);
         MemberPointsHistoryVO memberPointsHistoryVO = new MemberPointsHistoryVO();
         if (member != null) {
-            memberPointsHistoryVO.setPoint(member.getPoint());
-            memberPointsHistoryVO.setTotalPoint(member.getTotalPoint());
+            memberPointsHistoryVO.setPoint(atmUserPoints.getWallet().longValue());
             return memberPointsHistoryVO;
         }
         return new MemberPointsHistoryVO();

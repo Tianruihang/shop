@@ -712,11 +712,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         atmMingMachineUserDTOS.stream().forEach(atmMingMachineUserDTO1 -> {
             //24个类型
             for (int i = 0; i < 24; i++) {
-                boolean keyBool =  stringRedisTemplate.hasKey(keyName + atmMingMachineUserDTO1.getMachineId() + i);
+                boolean keyBool =  stringRedisTemplate.hasKey(keyName + atmMingMachineUserDTO1.getName() + i);
                 if (keyBool){
                     MemberPointMessage memberPointMessage = new MemberPointMessage();
                     memberPointMessage.setPoint(atmMingMachineUserDTO1.getHourPoints().longValue());
-                    memberPointMessage.setPointName(stringRedisTemplate.opsForValue().get(keyName + atmMingMachineUserDTO1.getMachineId() + i));
+                    memberPointMessage.setPointName(atmMingMachineUserDTO1.getName() +"_"+ i);
                     memberPointMessages.add(memberPointMessage);
                 }
             }

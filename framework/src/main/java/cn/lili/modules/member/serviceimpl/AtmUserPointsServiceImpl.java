@@ -23,6 +23,9 @@ public class AtmUserPointsServiceImpl extends ServiceImpl<AtmUserPointsMapper, A
     //查询所有用户积分
     @Override
     public List<AtmUserPoints> queryAllUserPoints() {
-        return this.baseMapper.selectList(null);
+        QueryWrapper<AtmUserPoints> wrapper = new QueryWrapper<>();
+        //查询status为1的用户
+        wrapper.eq("status", 1);
+        return this.baseMapper.selectList(wrapper);
     }
 }

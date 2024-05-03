@@ -78,6 +78,7 @@ public enum ResultCode {
     GOODS_SKU_QUANTITY_NOT_ENOUGH(11011, "商品库存不足"),
     MUST_HAVE_GOODS_SKU(11012, "规格必须要有一个！"),
     MUST_HAVE_SALES_MODEL(11022, "销售模式为批发时必须要有批发规则！"),
+    USER_NOT_VIP(11023, "无法购买溢价区订单"),
 
     HAVE_INVALID_SALES_MODEL(11023, "批发规则存在小于等于0的无效数据！"),
     MUST_HAVE_GOODS_SKU_VALUE(11024, "规格值不能为空！"),

@@ -28,7 +28,7 @@ public class UserPointJob {
     private AtmMingMachineUserService atmMingMachineUserService;
 
     //每小时生产积分
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void userPointJob() {
         log.info("用户日积分定时更新");
         //获取所有实名认证用户
@@ -45,13 +45,22 @@ public class UserPointJob {
                 //查询矿机是否过期
                 int limit = atmMingMachineUserDTO1.getLimitHours();
                 //根据创建时间和限制时间判断是否过期
-                if (atmMingMachineUserDTO1.getCreateTime().getTime() + limit * 60 * 60 * 1000 < System.currentTimeMillis()) {
+                if (!atmMingMachineUserDTO1.getMachineId().equals("1")&& atmMingMachineUserDTO1.getCreateTime().getTime() + limit * 60 * 60 * 1000 < System.currentTimeMillis()) {
                     return;
                 }
                 //获取当前系统时间的小时数
-                int hour = new java.util.Date().getHours();
-                //24个类型
-                stringRedisTemplate.opsForValue().set(keyName + atmMingMachineUserDTO1.getMachineId() + hour,atmMingMachineUserDTO1.getHourPoints().toString(), 24 * 60 * 60);
+//                int hour = new java.util.Date().getHours();
+                int hour = 8;
+                //生成24小时的积分
+                for (int i = 0; i < 24; i++) {
+                    //判断是否已有key 有则删掉
+                    if (stringRedisTemplate.hasKey(keyName + atmMingMachineUserDTO1.getName() + i)) {
+                        stringRedisTemplate.delete(keyName + atmMingMachineUserDTO1.getName() + i);
+                    }
+                    //24个类型
+                    stringRedisTemplate.opsForValue().set(keyName + atmMingMachineUserDTO1.getName() + i,atmMingMachineUserDTO1.getHourPoints().toString(), 24 * 60 * 60);
+
+                }
 
             });
         });
