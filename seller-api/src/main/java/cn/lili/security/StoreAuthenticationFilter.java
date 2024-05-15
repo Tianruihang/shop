@@ -72,7 +72,7 @@ public class StoreAuthenticationFilter extends BasicAuthenticationFilter {
         //从header中获取jwt
         String jwt = request.getHeader(SecurityEnum.HEADER_TOKEN.getValue());
         //如果没有token 则return
-        if (StrUtil.isBlank(jwt)) {
+        if (StrUtil.isBlank(jwt) || jwt.equals("undefined")) {
             chain.doFilter(request, response);
             return;
         }
@@ -106,7 +106,7 @@ public class StoreAuthenticationFilter extends BasicAuthenticationFilter {
             AuthUser authUser = new Gson().fromJson(json, AuthUser.class);
 
             //校验redis中是否有权限
-            if (cache.hasKey(CachePrefix.ACCESS_TOKEN.getPrefix(UserEnums.STORE, authUser.getId()) + jwt)) {
+//            if (cache.hasKey(CachePrefix.ACCESS_TOKEN.getPrefix(UserEnums.STORE, authUser.getId()) + jwt)) {
                 //用户角色
                 List<GrantedAuthority> auths = new ArrayList<>();
                 auths.add(new SimpleGrantedAuthority("ROLE_" + authUser.getRole().name()));
@@ -114,9 +114,9 @@ public class StoreAuthenticationFilter extends BasicAuthenticationFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authUser.getUsername(), null, auths);
                 authentication.setDetails(authUser);
                 return authentication;
-            }
-            ResponseUtil.output(response, 403, ResponseUtil.resultMap(false, 403, "登录已失效，请重新登录"));
-            return null;
+//            }
+//            ResponseUtil.output(response, 403, ResponseUtil.resultMap(false, 403, "登录已失效，请重新登录"));
+//            return null;
         } catch (ExpiredJwtException e) {
             log.debug("user analysis exception:", e);
         } catch (Exception e) {

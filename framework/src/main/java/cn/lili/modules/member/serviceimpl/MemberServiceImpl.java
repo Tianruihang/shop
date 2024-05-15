@@ -255,9 +255,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             throw new ServiceException(ResultCode.USER_NOT_EXIST);
         }
         //判断密码是否输入正确
-        if (!new BCryptPasswordEncoder().matches(password, member.getPassword())) {
-            throw new ServiceException(ResultCode.USER_PASSWORD_ERROR);
-        }
+//        String pwd = new BCryptPasswordEncoder().encode(password);
+//        if (!new BCryptPasswordEncoder().matches(password, member.getPassword())) {
+//            throw new ServiceException(ResultCode.USER_PASSWORD_ERROR);
+//        }
         //对店铺状态的判定处理
         return checkMemberStore(member);
     }

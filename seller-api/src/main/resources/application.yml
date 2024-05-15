@@ -33,7 +33,7 @@ spring:
     type: redis
   # Redis
   redis:
-    host: 114.115.136.5
+    host: 101.126.5.141
     port: 6379
     password: lilishop
     lettuce:

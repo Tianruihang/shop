@@ -24,7 +24,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://101.126.5.141:8000
+        url: http://101.126.5.141:8001
   cache:
     type: redis
   # Redis
@@ -247,10 +247,10 @@ lili:
     admin: http://192.168.0.108:8888
   #api地址
   api:
-    buyer: https://z171l91606.51mypc.cn
-    base: http://192.168.0.108:8888
-    manager: http://192.168.0.108:8888
-    seller: http://192.168.0.108:8888
+    buyer: http://127.0.0.1:8888
+    base: http://127.0.0.1:8888
+    manager: http://127.0.0.1:8888
+    seller: http://127.0.0.1:8889
 
   # jwt 细节设定
   jwt-setting:
@@ -280,7 +280,7 @@ lili:
     #        password: LiLiShopES
 
     logstash:
-      server: 101.126.5.141:5044
+      server: 127.0.0.1:5044
     rocketmq:
       promotion-topic: shop_lili_promotion_topic
       promotion-group: shop_lili_promotion_group

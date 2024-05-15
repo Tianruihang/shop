@@ -49,18 +49,15 @@ public class UserPointJob {
                     return;
                 }
                 //获取当前系统时间的小时数
-//                int hour = new java.util.Date().getHours();
-                int hour = 8;
-                //生成24小时的积分
-                for (int i = 0; i < 24; i++) {
-                    //判断是否已有key 有则删掉
-                    if (stringRedisTemplate.hasKey(keyName + atmMingMachineUserDTO1.getName() + i)) {
-                        stringRedisTemplate.delete(keyName + atmMingMachineUserDTO1.getName() + i);
-                    }
-                    //24个类型
-                    stringRedisTemplate.opsForValue().set(keyName + atmMingMachineUserDTO1.getName() + i,atmMingMachineUserDTO1.getHourPoints().toString(), 24 * 60 * 60);
-
+                int hour = new java.util.Date().getHours();
+                //判断是否已有key 有则删掉
+                if (stringRedisTemplate.hasKey(keyName + atmMingMachineUserDTO1.getName() + hour)) {
+                    stringRedisTemplate.delete(keyName + atmMingMachineUserDTO1.getName() + hour);
                 }
+                //24个类型
+                stringRedisTemplate.opsForValue().set(keyName + atmMingMachineUserDTO1.getName() + hour,atmMingMachineUserDTO1.getHourPoints().toString(), 24 * 60 * 60);
+
+
 
             });
         });
