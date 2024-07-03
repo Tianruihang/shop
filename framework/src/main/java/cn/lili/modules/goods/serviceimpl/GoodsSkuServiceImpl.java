@@ -154,6 +154,12 @@ public class GoodsSkuServiceImpl extends ServiceImpl<GoodsSkuMapper, GoodsSku> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public GoodsSku getGoodsSkuBySn(String sn) {
+        return this.getOne(new LambdaQueryWrapper<GoodsSku>().eq(GoodsSku::getSn, sn));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void update(Goods goods, GoodsOperationDTO goodsOperationDTO) {
         // 是否存在规格
         if (goodsOperationDTO.getSkuList() == null || goodsOperationDTO.getSkuList().isEmpty()) {

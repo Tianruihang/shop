@@ -34,6 +34,8 @@ public interface GoodsSkuService extends IService<GoodsSku> {
         return CachePrefix.GOODS_SKU.getPrefix() + id;
     }
 
+    GoodsSku getGoodsSkuBySn(String sn);
+
     /**
      * 获取商品SKU库存缓存ID
      *
