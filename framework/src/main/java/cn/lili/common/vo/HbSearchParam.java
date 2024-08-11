@@ -10,5 +10,6 @@ public class HbSearchParam {
     private String sku;
     private String num;
     private String provinceId;
+    private String countyId;
     private String cityId;
 }

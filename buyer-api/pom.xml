@@ -23,6 +23,11 @@
             <artifactId>enjoy</artifactId>
             <version>${enjoy.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -220,6 +220,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         return memberTokenGenerate.createToken(member, false);
     }
 
+    @Override
+    public Token HeBeiToken(){
+        Member member = this.findMember("测试五");
+        return memberTokenGenerate.createToken(member, false);
+    }
 
     @Override
     public void resetPassword(List<String> ids) {

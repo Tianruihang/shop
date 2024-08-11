@@ -36,6 +36,8 @@ public class Category extends BaseEntity {
     @ApiModelProperty(value = "父id, 根节点为0")
     private String parentId;
 
+    private String thirdId;//三方id
+
     @NotNull(message = "层级不能为空")
     @Min(value = 0,message = "层级需要大于0")
     @Max(value = 3,message = "层级最大为3")
@@ -56,10 +58,11 @@ public class Category extends BaseEntity {
     @ApiModelProperty(value = "是否支持频道")
     private Boolean supportChannel;
 
-    public Category(String id, String createBy, Date createTime, String updateBy, Date updateTime, Boolean deleteFlag, String name, String parentId, Integer level, BigDecimal sortOrder, Double commissionRate, String image, Boolean supportChannel) {
+    public Category(String id,String thirdId, String createBy, Date createTime, String updateBy, Date updateTime, Boolean deleteFlag, String name, String parentId, Integer level, BigDecimal sortOrder, Double commissionRate, String image, Boolean supportChannel) {
         super(id, createBy, createTime, updateBy, updateTime, deleteFlag);
         this.name = name;
         this.parentId = parentId;
+        this.thirdId = thirdId;
         this.level = level;
         this.sortOrder = sortOrder;
         this.commissionRate = commissionRate;
@@ -67,8 +70,9 @@ public class Category extends BaseEntity {
         this.supportChannel = supportChannel;
     }
 
-    public Category(String id, String name, String parentId, Integer level, BigDecimal sortOrder, Double commissionRate, String image, Boolean supportChannel) {
+    public Category(String id,String thirdId, String name, String parentId, Integer level, BigDecimal sortOrder, Double commissionRate, String image, Boolean supportChannel) {
         this.name = name;
+        this.thirdId = thirdId;
         this.parentId = parentId;
         this.level = level;
         this.sortOrder = sortOrder;

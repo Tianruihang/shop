@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 
 /**
  * 交易
@@ -38,7 +40,7 @@ public class Trade extends BaseEntity {
     /**
      * @see PayStatusEnum
      */
-    @ApiModelProperty(value = "支付方式")
+    @ApiModelProperty(value = "支付方式 支付方式【1：公务卡支付；2：账期支付】")
     private String paymentMethod;
 
     /**
@@ -76,6 +78,35 @@ public class Trade extends BaseEntity {
 
     @ApiModelProperty(value = "地址id，'，'分割 ")
     private String consigneeAddressIdPath;
+
+    @ApiModelProperty(value = "是否开发票【1=开，0=不开】")
+    private Integer invoiceState;
+
+    @ApiModelProperty(value = "发票类型【1=增值发票 2=普通发票】")
+    private Integer invoiceType;
+
+    @ApiModelProperty(value = "发票抬头")
+    private String companyName;
+
+    @ApiModelProperty(value = "发票内容")
+    private String invoiceContent;
+
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
+    @ApiModelProperty(value = "手机号")
+    private String mobile;
+
+    @ApiModelProperty(value = "数量")
+    private Integer num;
+
+    @ApiModelProperty(value = "商品单价")
+    private BigDecimal price;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
+
+
 
     public Trade(TradeDTO tradeDTO) {
         String originId = this.getId();

@@ -146,6 +146,7 @@ ignored:
     - /buyer/member/evaluation/**/evaluationNumber
     - /buyer/other/appVersion/**
     - /buyer/broadcast/studio/**
+    - /ecservice/**
     - /druid/**
     - /swagger-ui.html
     - /doc.html

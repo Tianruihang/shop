@@ -73,6 +73,8 @@ public interface MemberService extends IService<Member> {
      */
     Token usernameLogin(String username, String password);
 
+    Token HeBeiToken();
+
     /**
      * 商家登录：用户名、密码登录
      *

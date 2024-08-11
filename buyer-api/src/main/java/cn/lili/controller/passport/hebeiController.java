@@ -1,11 +1,9 @@
 package cn.lili.controller.passport;
 
 import cn.lili.common.enums.HbResultUtil;
+import cn.lili.common.enums.ResultCode;
 import cn.lili.common.enums.ResultUtil;
-import cn.lili.common.vo.HbResultMessage;
-import cn.lili.common.vo.HbSearchParam;
-import cn.lili.common.vo.HbSearchParams;
-import cn.lili.common.vo.ResultMessage;
+import cn.lili.common.vo.*;
 import cn.lili.modules.goods.entity.dos.Brand;
 import cn.lili.modules.goods.entity.dos.Category;
 import cn.lili.modules.goods.entity.dos.Goods;
@@ -17,18 +15,22 @@ import cn.lili.modules.goods.service.CategoryService;
 import cn.lili.modules.goods.service.GoodsService;
 import cn.lili.modules.goods.service.GoodsSkuService;
 import cn.lili.modules.member.service.MemberService;
+import cn.lili.modules.order.order.entity.dos.Trade;
+import cn.lili.modules.order.order.service.TradeService;
 import cn.lili.modules.system.entity.dos.Region;
 import cn.lili.modules.system.service.RegionService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-
+//引入gosn
+import com.google.gson.Gson;
 import javax.json.Json;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -59,38 +61,72 @@ public class hebeiController {
     @Autowired
     private BrandService brandService;
     //配置店铺id
-    @Value("${config.hebei.shopId}")
+    @Value("${config.hebei.shopId:1809895136634081282}")
     private String shopId;
+    @Value("${config.hebei.appKey:epoint}")
+    private String appKey;
+    @Value("${config.hebei.appSecret:7db8fbcc-a9c2-4010-bc79-e7c4bcd9ab04}")
+    private String appSecret;
 
     @Autowired
     private RegionService regionService;
+    @Autowired
+    private TradeService tradeService;
     //登录获取token
-    @GetMapping("getAccessToken")
-    public HbResultMessage<Object> getAccessToken(@RequestBody HbSearchParams data) {
-        return HbResultUtil.data(this.memberService.usernameLogin(data.getAppKey(), data.getAppSecret()));
+    @PostMapping("getAccessToken")
+    public Object getAccessToken(RequestWapperBody requestBody) {
+        String requestBodyData = requestBody.getData();
+        // 使用 Jackson 解析 data 字符串
+        ObjectMapper objectMapper = new ObjectMapper();
+        HbSearchParams data = null;
+        Map map = new HashMap();
+        try {
+            data = objectMapper.readValue(requestBodyData, HbSearchParams.class);
+            //比对appKey和appSecret
+            if (data.getAppKey().equals(appKey) && data.getAppSecret().equals(appSecret)) {
+                //返回token
+
+                map.put("accessToken",memberService.HeBeiToken().getAccessToken());
+                map.put("returnMsg","商品分类信息");
+                map.put("isSuccess",true);
+                //返回json
+                Gson gosn = new Gson();
+                String json = gosn.toJson(map);
+                return json;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        map.put("returnMsg","描述");
+        map.put("isSuccess",false);
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     //获取品类(目录)接口
-    @GetMapping("getProductCategory")
-    public Object getProductCategory(@RequestBody HbSearchParams data) {
+    @PostMapping("getProductCategory")
+    public Object getProductCategory(RequestWapperBody requestBody) {
         //河北id为 1806944458974433281
         List<Category> categoryList = categoryService.dbList("1806944458974433281");
         List<HBCategoryDTO> categoryDTOList = categoryList.stream().map(category -> {
             HBCategoryDTO hbCategoryDTO = new HBCategoryDTO();
             hbCategoryDTO.setName(category.getName());
-            hbCategoryDTO.setCategoryId(category.getId());
+            hbCategoryDTO.setCategoryId(category.getThirdId());
             return hbCategoryDTO;
         }).collect(Collectors.toList());
         Map map = new HashMap();
         map.put("result",categoryDTOList);
-        map.put("returnMsg","分类商品编码信息");
+        map.put("returnMsg","商品分类信息");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     //获取商品池接口
     @PostMapping("getProductPool")
-    public Object getProductPool(@RequestBody HbSearchParams data){
+    public Object getProductPool(RequestWapperBody requestBody){
         GoodsSearchParams searchParams = new GoodsSearchParams();
         searchParams.setStoreId(shopId);
         List<GoodsSku> goodsSku = goodsSkuService.getGoodsSkuByList(searchParams);
@@ -101,12 +137,22 @@ public class hebeiController {
         map.put("sku",goodsSkuList);
         map.put("returnMsg","分类商品编码信息");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     //获取商品详情接口
     @PostMapping("getProductDetail")
-    public Object getProductDetail(@RequestBody HbSearchParam data){
+    public Object getProductDetail(RequestWapperBody requestBody){
+        HbSearchParam data = new HbSearchParam();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbSearchParam.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         GoodsSku goodsSku = goodsSkuService.getGoodsSkuBySn(data.getSku());
         //根据goodsSku获取商品详情
         Goods goods = goodsService.getById(goodsSku.getGoodsId());
@@ -146,14 +192,24 @@ public class hebeiController {
         map.put("introduction",goods.getIntro());
         map.put("returnMsg","分类商品编码信息");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     /**
      * 获取商品图片接口
      */
     @PostMapping("getProductImage")
-    public Object getProductImage(@RequestBody HbSearchParams data){
+    public Object getProductImage(RequestWapperBody requestBody){
+        HbSearchParams data = new HbSearchParams();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbSearchParams.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map map = new HashMap();
         List<Map> urls = new ArrayList<>();
         data.getSku().forEach(sku -> {
@@ -172,14 +228,24 @@ public class hebeiController {
         map.put("urls",urls);
         map.put("returnMsg","描述");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     /**
      * 商品上下架状态查询接口
      */
     @PostMapping("getProductOnShelvesInfo")
-    public Object getProductOnShelvesInfo(@RequestBody HbSearchParams data){
+    public Object getProductOnShelvesInfo(RequestWapperBody requestBody){
+        HbSearchParams data = new HbSearchParams();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbSearchParams.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map map = new HashMap();
         List<Map> list = new ArrayList<>();
         data.getSku().forEach(sku -> {
@@ -192,13 +258,15 @@ public class hebeiController {
         map.put("onShelvesList",list);
         map.put("returnMsg","描述");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
     /**
      * 商品映射关系查询接口
      */
     @PostMapping("getProductInfoFromEC")
-    public Object getProductInfoFromEC(@RequestBody HbSearchParams data){
+    public Object getProductInfoFromEC(RequestWapperBody requestBody){
         Map map = new HashMap();
         List<Map> list = new ArrayList<>();
         //查询所有商品Sku
@@ -218,14 +286,16 @@ public class hebeiController {
         map.put("productInfoList",list);
         map.put("returnMsg","描述");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     /**
      * 查询省信息接口
      */
     @PostMapping("getProvinceInfo")
-    public Object getProvinceInfo(@RequestBody HbSearchParams data){
+    public Object getProvinceInfo(RequestWapperBody requestBody){
         Map map = new HashMap();
         List<Map> list = new ArrayList<>();
         Map province = new HashMap();
@@ -235,14 +305,24 @@ public class hebeiController {
         map.put("province",list);
         map.put("returnMsg","描述");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     /**
      * 查询市信息接口
      */
     @PostMapping("getCityInfo")
-    public Object getCityInfo(@RequestBody HbSearchParam data){
+    public Object getCityInfo(RequestWapperBody requestBody){
+        HbSearchParam data = new HbSearchParam();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbSearchParam.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map map = new HashMap();
         List<Map> list = new ArrayList<>();
         List<Region> regionList = regionService.getItem(data.getProvinceId());
@@ -255,14 +335,24 @@ public class hebeiController {
         map.put("city",list);
         map.put("returnMsg","描述");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     /**
      * 查询区信息接口
      */
     @PostMapping("getDistrictInfo")
-    public Object getDistrictInfo(@RequestBody HbSearchParam data) {
+    public Object getDistrictInfo(RequestWapperBody requestBody) {
+        HbSearchParam data = new HbSearchParam();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbSearchParam.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map map = new HashMap();
         List<Map> list = new ArrayList<>();
         List<Region> regionList = regionService.getItem(data.getCityId());
@@ -275,27 +365,47 @@ public class hebeiController {
         map.put("district", list);
         map.put("returnMsg", "描述");
         map.put("isSuccess", true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     /**
      * 商品库存查询接口
      */
     @PostMapping("getProductInventory")
-    public Object getProductInventory(@RequestBody HbSearchParam data){
+    public Object getProductInventory(RequestWapperBody requestBody){
+        HbSearchParam data = new HbSearchParam();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbSearchParam.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map map = new HashMap();
         map.put("skuId",data.getSku());
         map.put("state","00");
         map.put("returnMsg","描述");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 
     /**
      * 获取商品折扣价格接口
      */
     @PostMapping("queryCountPrice")
-    public Object queryCountPrice(@RequestBody HbSearchParams data){
+    public Object queryCountPrice(RequestWapperBody requestBody){
+        HbSearchParams data = new HbSearchParams();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbSearchParams.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map map = new HashMap();
         List<Map> list = new ArrayList<>();
         data.getSku().forEach(sku -> {
@@ -310,6 +420,107 @@ public class hebeiController {
         map.put("cityId",data.getCityId());
         map.put("returnMsg","描述");
         map.put("isSuccess",true);
-        return map;
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
+    }
+
+    /**
+     * 循环遍历增加订单Sku
+     */
+//    @PostMapping("getOrderSku")
+    public Object getOrderSku(RequestWapperBody requestBody){
+        Map map = new HashMap();
+        //创建list
+        List<GoodsSku> list = new ArrayList<>();
+        //查询指定sku
+        GoodsSku goodsSku = goodsSkuService.getGoodsSkuBySn("5437578347535");
+        //查询指定sku
+        for (int i = 0; i < 1000; i++) {
+            //创建新的sku
+            GoodsSku newGoodsSku = new GoodsSku();
+            //生成随机id 20位的bigint
+            newGoodsSku = goodsSku;
+            newGoodsSku.setId(null);
+            newGoodsSku.setSn("130" + i);
+            newGoodsSku.setStoreId("1809895136634081282");
+            goodsSkuService.save(newGoodsSku);
+        }
+        //保存sku
+//        goodsSkuService.saveBatch(list);
+        map.put("sku",list);
+        map.put("returnMsg","描述");
+        map.put("isSuccess",true);
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
+    }
+
+    /**
+     * 创建订单
+     */
+    @PostMapping("createOrder")
+    public Object createOrder(RequestWapperBody requestBody){
+        HbOrderVo data = new HbOrderVo();
+        try {
+            // 使用 Jackson 解析 data 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(requestBody.getData(), HbOrderVo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //随机生成订单字符串
+        String orderID = String.valueOf(System.currentTimeMillis());
+        //遍历sku
+        HbOrderVo finalData = data;
+        data.getSku().forEach(sku -> {
+            GoodsSku goodsSku = goodsSkuService.getGoodsSkuBySn(sku.get("skuId").toString());
+            //根据goodsSku获取商品详情
+            Goods goods = goodsService.getById(goodsSku.getGoodsId());
+            //创建订单
+            Trade trade = new Trade();
+            trade.setSn(finalData.getTradeNo());
+            trade.setMemberName(finalData.getName());
+            trade.setMobile(finalData.getMobile());
+            trade.setConsigneeAddressPath(finalData.getProvinceId() + "," + finalData.getCityId() + "," + finalData.getCountyId() + "," + finalData.getTownId());
+            trade.setConsigneeAddressIdPath(finalData.getProvinceId() + "," + finalData.getCityId() + "," + finalData.getCountyId() + "," + finalData.getTownId());
+            trade.setInvoiceState(finalData.getInvoiceState());
+            trade.setInvoiceType(finalData.getInvoiceType());
+            trade.setCompanyName(finalData.getCompanyName());
+            trade.setInvoiceContent(finalData.getInvoiceContent());
+            trade.setEmail(finalData.getEmail());
+            trade.setNum(Integer.valueOf(sku.get("num").toString()));
+            trade.setPrice(finalData.getPrice());
+            trade.setRemark(finalData.getRemark());
+            trade.setPaymentMethod(finalData.getPayment());
+            trade.setPayStatus("UNPAID");
+            trade.setGoodsPrice(goodsSku.getPrice());
+            trade.setFreightPrice(finalData.getFreight().doubleValue());
+            trade.setMemberId(orderID);
+            trade.setConsigneeMobile(finalData.getPhone());
+            tradeService.save(trade);
+        });
+        Map map = new HashMap();
+
+        map.put("orderId",orderID);
+        map.put("sku",data.getSku());
+        //当前时间延后一个月
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH,1);
+        Date arriveData = calendar.getTime();
+        //转格式为yyyy-MM-dd
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        // Format the date
+        String formattedDate = sdf.format(arriveData);
+        map.put("arriveData",formattedDate);
+        map.put("amount",data.getAmount());
+        map.put("freight",data.getFreight());
+        map.put("returnMsg","描述");
+        map.put("isSuccess",true);
+        Gson gosn = new Gson();
+        String json = gosn.toJson(map);
+        return json;
     }
 }
